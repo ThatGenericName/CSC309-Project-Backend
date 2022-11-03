@@ -1,0 +1,38 @@
+Studio
+* Respresents a studio
+* Fields
+    * name: CharField
+        - The name of the studio
+    * address: CharField
+        - The address of the studio
+    * post_code: CharField
+        - The postal code of the studio
+    * geo_loc: CharField
+        - The geographical location of the studio
+    * phone_num: CharField
+        - The phone number of the studio
+    * last_modified: DateTime
+        - The last time studio data was modified
+    * studio_imgs: ImageRep
+        - A Many-To-Many relation to images for the studio
+
+ImageRep
+* An image
+* Fields
+    * image: Image
+        - the image this model contains
+    * studio: Studio
+        - the studio this image is associated with
+
+Amenity
+* represents amenities available at a studio
+* Fields
+    * studio: Studio
+        - the Studio that this amenity belongs to
+    * type: CharField
+        - Amenity type.
+    * quantity: Int
+        - the quantity of this amenity
+
+
+

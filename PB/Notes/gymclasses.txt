@@ -1,0 +1,49 @@
+GymClass
+* A class available at a gym
+* Fields
+    * studio: Studio
+        - the studio this class will occur at
+    * name: CharField
+        - the name of this class
+    * description: TextField
+        - the description of this class
+    * last_modified: DateTime
+        - the last time data for this class was modified
+    * keywords: TextField
+        - Keywords
+    * capacity: Int
+        - The capacity for this class
+        - Note, it seems there are also instance capacities that
+        we need to use, ie a class on monday may have a capacity
+        of 20 while a class on wednesday might have a capacity of
+        10.
+    * weekly_schedule: GymClassShedule
+        - a many-to-many relation for the weekly schedule for this
+        class
+
+GymClassSchedule
+* Represents what day of the week and time a class occurs
+* Fields
+    * date: CharField
+        - the day of the week this class takes place, ie monday
+    * start_time: Time
+        - the time this class starts
+    * end_time: Time
+        - the time this class ends
+
+GymClassOccurence
+* Represents a specific instance of a gym class
+* Fields
+    * parent_class: GymClass
+        - the gym class this is an instance of
+    * start_datetime: DateTime
+        - the time and date this class starts
+    * end_datetime: DateTime
+        - the time and date this calss ends
+    * enrollment_capacity: Int
+        - the max enrollment capacity of this instance
+    * enrollment_count: Int
+        - The number of people enrolled in this class
+        - This could be replaced in the future by using a query
+        and counting how many users have enrolled in this instance
+

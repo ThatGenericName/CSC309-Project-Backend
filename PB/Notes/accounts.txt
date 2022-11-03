@@ -1,0 +1,49 @@
+UserExtension
+* Extends the default Django User model using a OneToOneField.
+* Fields
+    * user: User
+        - the user that this model is extending
+    * phone_num: CharField
+        - the User's phone number
+    * profile_pic: Image
+        - the User's profile picture
+    * last_modified: DateTime
+        - the last time this entry was modified
+    * enrolled_classes: GymClassOccurence
+        - a Many-To-Many relationship (a list) of classes that the
+        User has enrolled in
+        - See GymClass in gymclasses
+    * active_subscription: UserSubcription
+        - The current active subscription. null if the user doesnt
+        have an active subscription
+
+UserSubscription
+* Data about a subscription (past, present or future) of a user.
+* Fields
+    * user: User
+        - The user that the subscription belongs to
+    * current_subscription: Subscription
+        - The current subscription this subscription is
+        - See the Subscription model in Subscriptions
+    * payment_time: DateTime
+        - When the subscription was paid for
+    * start_time: DateTime
+        - When the subscription begins
+    * end_time: DateTime
+        - When the subscription will end.
+
+UserPaymentData
+* Stores a payment information for a user.
+* Fields
+    * user: User
+        - The user that owns the payment information
+    * card_type: CharField
+        - The card type (debit or credit)
+    * card_num: CharField
+        - The card number as a string
+    * card_name: CharField
+        - The name on the credit card
+    * exp_month: Integer
+        - The expiry month of the credit card
+    * exp_year: Integer
+        - The expiry year of the credit card

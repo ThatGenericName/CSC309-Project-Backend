@@ -1,0 +1,15 @@
+Subscription
+* Represents a subscription type
+* Fields
+    * name: CharField
+        - the name of the subscription
+    * description: TextField
+        - the description of the subscription
+    * price: Decimal
+        - the price of the subscription
+        - A Decimal datatype in Python represents exact numbers, in real
+        life similar datatypes are used for monetary transactions to
+        prevent floating point precision errors when making monetary
+        exchanges.
+    * duration: Duration
+        - the duration of the subscription.
