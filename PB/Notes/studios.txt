@@ -22,7 +22,7 @@ ImageRep
     * image: Image
         - the image this model contains
     * studio: Studio
-        - the studio this image is associated with
+	- the studio this image belongs to
 
 Amenity
 * represents amenities available at a studio

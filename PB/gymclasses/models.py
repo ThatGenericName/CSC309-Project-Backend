@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 from studios.models import Studio
 
@@ -14,11 +15,13 @@ class GymClass(models.Model):
     weekly_schedule = models.ManyToManyField("GymClassSchedule")
 
 class GymClassSchedule(models.Model):
+    coach = models.ForeignKey(User, on_delete=models.SET_NULL)
     date = models.CharField(null=False, max_length=9)
     start_time = models.TimeField(null=False, auto_now=False, auto_now_add=False)
     end_time = models.TimeField(null=False, auto_now=False, auto_now_add=False)
 
 class GymClassOccurence(models.Model):
+    coach = models.ForeignKey(User, on_delete=models.SET_NULL)
     parent_class = models.ForeignKey(GymClass, on_delete=models.CASCADE)
     start_datetime = models.DateTimeField(null=False, auto_now=False, auto_now_add=False)
     end_datetime = models.DateTimeField(null=False, auto_now=False, auto_now_add=False)

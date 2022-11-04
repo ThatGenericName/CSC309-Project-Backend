@@ -10,11 +10,11 @@ class Studio(models.Model):
     geo_loc = models.CharField(max_length=255)
     phone_num = models.CharField(max_length=20)
     last_modified = models.DateTimeField(auto_now=True)
-    studio_imgs = models.ManyToManyField("ImageRep")
 
 class ImageRep(models.Model):
     id = models.IntegerField(primary_key=True)
     image = models.ImageField(upload_to="StudioImages/", null=False)
+    studio = models.ForeignKey(Studio, on_delete=models.CASCADE)
 
 class Amenity(models.Model):
     id = models.IntegerField(primary_key=True)

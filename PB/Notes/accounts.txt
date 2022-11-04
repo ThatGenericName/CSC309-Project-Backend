@@ -31,6 +31,8 @@ UserSubscription
         - When the subscription begins
     * end_time: DateTime
         - When the subscription will end.
+    * payment_info: UserPaymentData:
+	- The payment method used for the subscription
 
 UserPaymentData
 * Stores a payment information for a user.

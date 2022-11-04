@@ -24,6 +24,8 @@ GymClass
 GymClassSchedule
 * Represents what day of the week and time a class occurs
 * Fields
+    * coach: User
+	- the coach in charge of the session
     * date: CharField
         - the day of the week this class takes place, ie monday
     * start_time: Time
@@ -34,6 +36,8 @@ GymClassSchedule
 GymClassOccurence
 * Represents a specific instance of a gym class
 * Fields
+    * coach: User
+	- the coach in charge of the session
     * parent_class: GymClass
         - the gym class this is an instance of
     * start_datetime: DateTime
