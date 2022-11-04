@@ -5,6 +5,9 @@ from gymclasses.models import GymClassOccurence
 from subscriptions.models import Subscription
 
 # Create your models here.
+'''
+Models
+'''
 class UserExtension(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     phone_num = models.CharField(max_length=12, null=False)
@@ -28,3 +31,8 @@ class UserPaymentData(models.Model):
     card_name = models.CharField(null=False, max_length=255)
     exp_month = models.IntegerField(null=False)
     exp_year = models.IntegerField(null=False)
+
+'''
+Serializers
+'''
+
