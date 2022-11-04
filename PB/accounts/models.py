@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from rest_framework import serializers
 
 from gymclasses.models import GymClassOccurence
 from subscriptions.models import Subscription
@@ -32,7 +33,30 @@ class UserPaymentData(models.Model):
     exp_month = models.IntegerField(null=False)
     exp_year = models.IntegerField(null=False)
 
+
 '''
 Serializers
 '''
+class UserExtendedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserExtension
+        fields = [
+            'phone_num',
+            'enrolled_classes',
+            'active_subscription',
+            'profile_pic',
+            'last_modified'
+        ]
 
+class UserSerializer(serializers.ModelSerializer):
+    task_extends = UserExtendedSerializer(many=False)
+
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'is_staff'
+        ]

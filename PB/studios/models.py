@@ -14,7 +14,7 @@ class Studio(models.Model):
 class ImageRep(models.Model):
     id = models.IntegerField(primary_key=True)
     image = models.ImageField(upload_to="StudioImages/", null=False)
-    studio = models.ForeignKey(Studio, on_delete=models.CASCADE)
+    studio = models.ForeignKey(Studio, on_delete=models.CASCADE, null=False)
 
 class Amenity(models.Model):
     id = models.IntegerField(primary_key=True)
