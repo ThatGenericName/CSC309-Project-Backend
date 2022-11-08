@@ -1,21 +1,37 @@
-from django.contrib.auth.models import User
-from django.shortcuts import render
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
+from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt import authentication
+
+from accounts.models import UserExtendedSerializer, UserExtension, \
+    UserPaymentData, UserPaymentDataSerializer
 
 
 # Create your views here.
-
 
 class ViewAccount(APIView):
     '''
     Views a specific account
     '''
 
-    authentication_classes = [authentication.JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request: Request, format=None):
+        user = request.user
+        ext = UserExtension.objects.get(user=user)
+        s = UserExtendedSerializer(ext).data
+        s1 = s['user']
+        s.pop('user')
+        for (k, v) in s1.items():
+            s[k] = v
 
-    def get(self, request, format=None):
-        print(request)
-        user = User.objects.get()
+        try:
+            upd = UserPaymentData.objects.get(user=user)
+            upddat = UserPaymentDataSerializer(upd).data
+        except ObjectDoesNotExist:
+            upddat = None
 
+        s['current_payment_data'] = upddat
+
+        return Response(s)
 
