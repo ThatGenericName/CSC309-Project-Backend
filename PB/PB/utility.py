@@ -2,12 +2,19 @@ from __future__ import annotations
 
 import os
 from uuid import uuid4
+import re
 
 from PIL import Image
 
 
 def ValidatePhoneNumber(num: str):
     return not num.isalpha()
+
+def ValidatePostalCode(postal_code: str):
+    regex = '^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$'
+    if re.match(regex, postal_code) is None:
+        return False
+    return True
 
 def ValidatePicture(a):
     trial_image = Image.open(a)
