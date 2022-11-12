@@ -1,3 +1,4 @@
+import os
 from geopy.geocoders import Nominatim
 
 import rest_framework.parsers
@@ -12,7 +13,7 @@ from ..models import Studio, ImageRep
 from PB.utility import ValidatePhoneNumber, ValidatePostalCode, ValidatePicture
 
 
-class CreateStudio(APIView):
+class EditStudio(APIView):
     parser_classes = [
         rest_framework.parsers.JSONParser,
         rest_framework.parsers.FormParser,
@@ -28,33 +29,47 @@ class CreateStudio(APIView):
         'phone_num'
     ]
 
-    def post(self, request: Request, format=None):
+    def post(self, request: Request, *args, **kwargs):
+
+        pk = kwargs['pk']
+
+        if not Studio.objects.filter(id=pk):
+            return Response({"Wrong Studio Id"})
         errors = self.ValidateData(request.data)
 
         if len(errors):
             return Response(errors)
 
         data = request.data
+        studio = Studio.objects.get(id=pk)
 
-        geolocator = Nominatim(user_agent="studios")
-        map_location = geolocator.geocode(data["address"], timeout=10)
+        for (k, v) in data.items():
+            if k in self.keys and len(v):
+                setattr(studio, k, v)
 
-        studio = Studio(
-            name=data['name'],
-            address=data['address'],
-            post_code=data['post_code'],
-            geo_loc=map_location,
-            phone_num=data['phone_num'])
+        if data['address']:
+            geolocator = Nominatim(user_agent="studios")
+            print(geolocator.geocode(data["address"], timeout=10))
+            setattr(studio, "geo_loc", geolocator.geocode(data["address"], timeout=10))
 
         studio.save()
 
-        for f in request.FILES.getlist('images'):
-            if ValidatePicture(f):
-                image = ImageRep.objects.create(image=f,
-                                                studio=Studio.objects.get(name=data['name']))
-                image.save()
+        if request.FILES.getlist('images'):
+            for item in ImageRep.objects.filter(studio_id=pk):
+                old_pic = item.image
+                if old_pic is not None:
+                    path = old_pic.path
+                    if os.path.exists(path):
+                        os.remove(path)
+            ImageRep.objects.filter(studio_id=pk).delete()
 
-        return Response({"success": True})
+            for f in request.FILES.getlist('images'):
+                if ValidatePicture(f):
+                    image = ImageRep.objects.create(image=f,
+                                                    studio=studio)
+                    image.save()
+
+        return Response(status=200)
 
     def ValidateData(self, data) -> dict:
         errors = {}
@@ -64,24 +79,24 @@ class CreateStudio(APIView):
         if 'images' not in data:
             errors['images'] = "Missing Key"
 
-        if 'name' not in errors:
+        if 'name' not in errors and data['name']:
             try:
                 Studio.objects.get(name=data['name'])
                 errors['name'] = "This Studio name is already taken"
             except ObjectDoesNotExist:
                 pass
 
-        if 'phone_num' not in errors:
+        if 'phone_num' not in errors and data['phone_num']:
             if not ValidatePhoneNumber(data['phone_num']):
                 errors['phone_num'] = 'Enter a valid phone number'
 
-        if 'post_code' not in errors:
+        if 'post_code' not in errors and data['post_code']:
             if not ValidatePostalCode(data['post_code']):
                 errors['post_code'] = 'Enter a Valid Postal Code'
 
-        if 'address' not in errors:
+        if 'address' not in errors and data["address"]:
             geolocator = Nominatim(user_agent="studios")
-            map_location = geolocator.geocode(data["address"])
+            map_location = geolocator.geocode(data["address"], timeout=10)
 
             if map_location is None:
                 errors['address'] = 'Enter a Valid Address'

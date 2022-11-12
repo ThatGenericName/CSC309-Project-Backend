@@ -25,6 +25,7 @@ EXT_DATA_FIELDS = (
     'phone_num'
 )
 
+
 class EditProfile(APIView):
     '''
     edits a specific profile
@@ -66,7 +67,7 @@ class EditProfile(APIView):
 
     cleanedData = {}
 
-    def ValidateData(self, data:dict) -> dict:
+    def ValidateData(self, data: dict) -> dict:
         errors = {}
         for k in KEYS:
             if k not in data:

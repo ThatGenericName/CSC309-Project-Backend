@@ -1,10 +1,4 @@
-import time
-
 import rest_framework.parsers
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.core.validators import validate_email
-from django.utils import timezone
-from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -31,13 +25,14 @@ class ListAmenity(APIView):
         'quantity'
     ]
 
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request: Request, *args, **kwargs):
 
-        data = request.data
-
         pk = kwargs['pk']
+        if not Studio.objects.filter(id=pk):
+            return Response({"Wrong Studio Id"})
+
         lst = []
 
         amenity = Amenity.objects.filter(studio_id=pk)
@@ -47,7 +42,5 @@ class ListAmenity(APIView):
                 "type": item.type,
                 "quantity": item.quantity
             })
-
-        # amenity.save()
 
         return Response(lst)

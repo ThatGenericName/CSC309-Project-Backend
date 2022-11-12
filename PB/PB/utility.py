@@ -8,13 +8,19 @@ from PIL import Image
 
 
 def ValidatePhoneNumber(num: str):
-    return not num.isalpha()
+
+    regex = s = "^\(?([0-9]{3})\)?[-.●]?([0-9]{3})[-.●]?([0-9]{4})$"
+    if re.match(regex, num) is None:
+        return False
+    return True
+
 
 def ValidatePostalCode(postal_code: str):
     regex = '^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$'
     if re.match(regex, postal_code) is None:
         return False
     return True
+
 
 def ValidatePicture(a):
     trial_image = Image.open(a)
@@ -31,13 +37,13 @@ this format of custom filename generation is found here:
 https://stackoverflow.com/questions/2680391/how-to-change-the-file-name-of-an-uploaded-file-in-django
 '''
 
-
 '''
 All this currently does is check that all the payment information
 is there and then returns True if that is the case.
 
 Simulates a payment system I guess.
 '''
+
 
 def VerifyPayment(paymentData: dict) -> bool:
     PAYMENT_KEYS = (
@@ -53,6 +59,7 @@ def VerifyPayment(paymentData: dict) -> bool:
         if k not in paymentData:
             return False
     return True
+
 
 class ValidateFloat:
     '''
@@ -79,6 +86,7 @@ class ValidateFloat:
         elif isinstance(d, float) or isinstance(d, int):
             self.value = float(d)
 
+
 class ValidateInt:
     '''
     error 1 means empty value,
@@ -104,6 +112,7 @@ class ValidateInt:
         elif isinstance(d, float) or isinstance(d, int):
             self.value = int(float(d))
 
+
 def str2bool(v):
     a = v.lower() in ("yes", "true", "t", "1")
     b = v.lower() in ("no", 'false', 'f', '0')
@@ -111,6 +120,7 @@ def str2bool(v):
     if not a and not b:
         raise ValueError("the string is not a boolean")
     return a
+
 
 class ValidateBool:
     '''

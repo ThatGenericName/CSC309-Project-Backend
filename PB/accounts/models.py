@@ -25,8 +25,6 @@ def RandomNameGen(instance, filename):
     return os.path.join(PATH, fn)
 
 
-
-
 class UserExtension(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,
                                 primary_key=True)
@@ -38,6 +36,7 @@ class UserExtension(models.Model):
     active_subscription = models.OneToOneField("UserSubscription", null=True,
                                                on_delete=models.SET_NULL)
 
+
 def GetUserExtension(user):
     try:
         Uext = UserExtension.objects.get(user=user)
@@ -47,6 +46,7 @@ def GetUserExtension(user):
         Uext = UserExtension.objects.create(user=user)
         Uext.save()
         return Uext
+
 
 class UserSubscription(models.Model):
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
@@ -74,13 +74,13 @@ class UserPaymentData(models.Model):
     active = models.BooleanField(null=False, default=True)
     tgen = models.BooleanField(null=False, default=False)
 
+
 '''
 Serializers
 '''
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = [
@@ -107,6 +107,7 @@ class UserExtendedSerializer(serializers.ModelSerializer):
         ]
         depth = 1
 
+
 class InternalUserPaymentDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserPaymentData
@@ -118,6 +119,8 @@ class InternalUserPaymentDataSerializer(serializers.ModelSerializer):
             'exp_year',
             'active'
         ]
+
+
 class UserPaymentDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserPaymentData
@@ -140,9 +143,11 @@ class UserPaymentDataSerializer(serializers.ModelSerializer):
             data['card_num'] = cns
         return data
 
+
 class UserSubscriptionSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     payment_detail = UserPaymentDataSerializer()
+
     class Meta:
         model = UserSubscription
         fields = [
@@ -159,4 +164,3 @@ class UserSubscriptionSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         dat = super().to_representation(instance)
         return dat
-

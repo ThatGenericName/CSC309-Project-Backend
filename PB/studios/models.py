@@ -50,6 +50,7 @@ class ImageRepSerializer(serializers.ModelSerializer):
             'studio',
             'image',
         ]
+        depth = 1
 
 class AmenitySerializer(serializers.ModelSerializer):
     studio = StudioSerializer
@@ -58,4 +59,6 @@ class AmenitySerializer(serializers.ModelSerializer):
         fields = [
             'type',
             'quantity',
+            'studio',
         ]
+        depth = 1
