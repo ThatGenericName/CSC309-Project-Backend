@@ -1,7 +1,7 @@
 from django.urls import path
 
 from accounts.Views.accountsubscription import AddSubscription, \
-    CancelSubscription, GetAllUserSubscriptions, GetSubscription
+    CanceAllSubscriptions, GetAllUserSubscriptions, GetSubscription
 from accounts.Views.paymentinformation import AddPaymentInformation, \
     RemovePaymentInformation
 from accounts.Views.editprofile import EditProfile
@@ -26,7 +26,7 @@ urlpatterns = [
     path('icon/<str:image_uuid>', ViewProfilePicture.as_view(), name='viewPicture'),
     path('icon/clear/', ClearProfilePicture.as_view(), name='clearPicture'),
     path('subscriptions/add/', AddSubscription.as_view(), name='addSubscription'),
-    path('subscriptions/cancel/', CancelSubscription.as_view(), name='cancelSubscriptions'),
+    path('subscriptions/cancel/', CanceAllSubscriptions.as_view(), name='cancelSubscriptions'),
     path('subscriptions/<int:pk>/', GetSubscription.as_view(), name='getSubscription'),
     path('subscriptions/', GetAllUserSubscriptions.as_view(), name='getAllSubscriptions'),
     path('payment/', GetPaymentInformation.as_view(), name='getPaymentInfo'),

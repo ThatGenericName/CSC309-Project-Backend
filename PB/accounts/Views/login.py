@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 
+from accounts.models import UserExtension
+
 
 class Login(APIView):
 
@@ -42,6 +44,15 @@ class Login(APIView):
             pass
 
         token = Token.objects.create(user=user)
+
+        try:
+            UserExtension.objects.get(user=user)
+        except ObjectDoesNotExist:
+            uext = UserExtension.objects.create(
+                user=user,
+                phone_num='1000000000'
+            )
+            uext.save()
 
         return Response({"token": token.key})
 

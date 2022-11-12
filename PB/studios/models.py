@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 
 # Create your models here.
@@ -11,6 +13,10 @@ class Studio(models.Model):
     geo_loc = models.CharField(max_length=255)
     phone_num = models.CharField(max_length=20)
     last_modified = models.DateTimeField(auto_now=True)
+    tgen = models.BooleanField(null=False, default=False)
+
+    def __str__(self):
+        return self.name
 
 
 class ImageRep(models.Model):
@@ -22,6 +28,15 @@ class Amenity(models.Model):
     studio = models.ForeignKey(Studio, null=False, on_delete=models.CASCADE)
     type = models.CharField(null=False, max_length=255)
     quantity = models.IntegerField(null=False)
+    tgen = models.BooleanField(null=False, default=False)
+
+class StudioSearchHash(models.Model):
+    hash = models.CharField(null=False, max_length=17)
+    search_date = models.DateTimeField(auto_now_add=True)
+class StudioSearchTemp(models.Model): # This is so jank
+    studio = models.ForeignKey(Studio, null=False, on_delete=models.CASCADE)
+    searchkey = models.ForeignKey(StudioSearchHash, on_delete=models.CASCADE)
+    dist = models.FloatField(null=False, default=0)
 
 
 '''
@@ -50,7 +65,6 @@ class ImageRepSerializer(serializers.ModelSerializer):
             'studio',
             'image',
         ]
-        depth = 1
 
 class AmenitySerializer(serializers.ModelSerializer):
     studio = StudioSerializer
@@ -59,6 +73,4 @@ class AmenitySerializer(serializers.ModelSerializer):
         fields = [
             'type',
             'quantity',
-            'studio',
         ]
-        depth = 1
