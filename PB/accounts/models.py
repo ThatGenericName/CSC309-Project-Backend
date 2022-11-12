@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from rest_framework.permissions import BasePermission
 
 from gymclasses.models import GymClass
 from subscriptions.models import Subscription
@@ -165,3 +166,18 @@ class UserSubscriptionSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         dat = super().to_representation(instance)
         return dat
+
+
+'''
+Custom permission classes
+'''
+
+class IsCoach(BasePermission):
+
+    def has_permission(self, request, view):
+        """
+        Return `True` if a user is part of the coach usergroup
+        """
+        if bool(request.user):
+            return request.user.groups.filter(name='Coach').exists()
+        return False
