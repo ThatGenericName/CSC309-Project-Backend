@@ -2,6 +2,7 @@ from django.urls import path
 
 from accounts.Views.accountsubscription import AddSubscription, \
     CanceAllSubscriptions, GetAllUserSubscriptions, GetSubscription
+from accounts.Views.adminsubrenew import AdminRenew
 from accounts.Views.paymentinformation import AddPaymentInformation, \
     RemovePaymentInformation
 from accounts.Views.editprofile import EditProfile
@@ -33,5 +34,6 @@ urlpatterns = [
     path('payment/add/', AddPaymentInformation.as_view(), name='addPaymentInfo'),
     path('payment/remove/', RemovePaymentInformation.as_view(), name='removePaymentInfo'),
     # Below are the admin debug calls
-    path('admin/generatesubscriptions/', AdminCreateUSubs.as_view(), name='adminCreateUSubs')
+    path('admin/generatesubscriptions/', AdminCreateUSubs.as_view(), name='adminCreateUSubs'),
+    path('admin/renew/', AdminRenew.as_view(), name='adminRenew')
 ]

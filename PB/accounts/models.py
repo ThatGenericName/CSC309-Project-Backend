@@ -29,10 +29,10 @@ class UserExtension(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,
                                 primary_key=True)
     phone_num = models.CharField(max_length=12, null=False)
-    profile_pic = models.ImageField(
-        upload_to=RandomNameGen)
+    profile_pic = models.ImageField(blank=True,
+                                    upload_to=RandomNameGen)
     last_modified = models.DateTimeField(auto_now=True)
-    enrolled_classes = models.ManyToManyField(GymClass)
+    enrolled_classes = models.ManyToManyField(GymClass, blank=True)
     active_subscription = models.OneToOneField("UserSubscription", null=True,
                                                on_delete=models.SET_NULL)
 
@@ -53,13 +53,14 @@ class UserSubscription(models.Model):
     subscription = models.ForeignKey(Subscription, null=True,
                                      on_delete=models.CASCADE)
     payment_time = models.DateTimeField(null=True, auto_now_add=False,
-                                        auto_now=False)
+                                        auto_now=False, blank=True)
     start_time = models.DateTimeField(null=False, auto_now_add=False,
                                       auto_now=False)
     end_time = models.DateTimeField(null=False, auto_now_add=False,
                                     auto_now=False)
     payment_detail = models.ForeignKey("UserPaymentData",
-                                       on_delete=models.SET_NULL, null=True)
+                                       on_delete=models.SET_NULL, null=True,
+                                       blank=True)
     recurring = models.BooleanField(null=False, default=True)
     tgen = models.BooleanField(null=False, default=False)
 
