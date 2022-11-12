@@ -1,6 +1,7 @@
 import rest_framework.parsers
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.validators import validate_email
+from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -41,7 +42,12 @@ class AddGymClassToUser(APIView):
         try:
             gclass = GymClass.objects.get(id=classId)
         except ObjectDoesNotExist:
-            return Response({'error': 'class was not found'}, status=404)
+            return Response({'error': 'Class was not found'}, status=404)
+
+        now = timezone.now()
+
+        if gclass.end_datetime < now:
+            return Response({'error': 'This class has already ended'})
 
         user = request.user
         uext = UserExtension.objects.get(user=user)
@@ -79,6 +85,10 @@ class RemoveGymClassFromUser(APIView):
             gclass = GymClass.objects.get(id=classId)
         except ObjectDoesNotExist:
             return Response({'error': 'class was not found'}, status=404)
+
+        now = timezone.now()
+        if gclass.end_datetime < now:
+            return Response({'error': 'This class has already ended'})
 
         user = request.user
         uext = UserExtension.objects.get(user=user)
