@@ -7,7 +7,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from gymclasses.models import GymClassOccurence
+from gymclasses.models import GymClass
 from subscriptions.models import Subscription
 
 # Create your models here.
@@ -32,7 +32,7 @@ class UserExtension(models.Model):
     profile_pic = models.ImageField(
         upload_to=RandomNameGen)
     last_modified = models.DateTimeField(auto_now=True)
-    enrolled_classes = models.ManyToManyField(GymClassOccurence)
+    enrolled_classes = models.ManyToManyField(GymClass)
     active_subscription = models.OneToOneField("UserSubscription", null=True,
                                                on_delete=models.SET_NULL)
 
