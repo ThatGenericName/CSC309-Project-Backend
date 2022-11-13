@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from rest_framework import serializers
 from rest_framework.permissions import BasePermission
 
@@ -178,6 +178,7 @@ class IsCoach(BasePermission):
         """
         Return `True` if a user is part of the coach usergroup
         """
+        new_group, created = Group.objects.get_or_create(name='Coach')
         if bool(request.user):
             return request.user.groups.filter(name='Coach').exists()
         return False
