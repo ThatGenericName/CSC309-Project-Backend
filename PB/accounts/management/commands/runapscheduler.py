@@ -1,5 +1,6 @@
-# runapscheduler.py
+
 import logging
+from datetime import datetime, timedelta
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from django.conf import settings
@@ -19,17 +20,19 @@ from accounts.models import InternalUserPaymentDataSerializer, \
 
 logger = logging.getLogger(__name__)
 
+REFRESH_DUR = timedelta(hours=16)
 
 def CheckForSubscriptionRenewals():
 
     print('checking for subscriptions that need renewals')
     now = timezone.now()
+    range = now + REFRESH_DUR
     users = User.objects.all()
     for user in users:
         print(f'checking {user.username}')
         uext = user.userextension
         activeSub = uext.active_subscription
-        if activeSub is not None:
+        if activeSub is not None and activeSub.end_time < range:
             print(f'{user.username} has an active subscription')
             futureSubs = UserSubscription.objects.filter(
                 user=user,
@@ -37,6 +40,7 @@ def CheckForSubscriptionRenewals():
             ).order_by('start_time')
 
             if futureSubs.count():
+                print(f'{user.username} has future subscriptions, activating')
                 nextSub = futureSubs.first()
 
                 if (nextSub.payment_time is not None):
@@ -46,11 +50,14 @@ def CheckForSubscriptionRenewals():
                 dat = InternalUserPaymentDataSerializer(upd).data
                 dat['pin'] = '0000'
                 if VerifyPayment(dat):
-                    nextSub.payment_time = timezone.now()
+                    nextSub.payment_time = activeSub.end_time
                     nextSub.payment_detail = upd
                     nextSub.save()
+                else:
+                    print(f'{user.username}\'s payment failed, cancelling subscriptions')
+                    RemoveAndShiftUnpaidSubs(user, now)
             elif activeSub.recurring:
-                print('user has a recurring subscription and does not have further subscriptions')
+                print(f'{user.username} has a recurring subscription and does not have further subscriptions')
                 try:
                     upd = UserPaymentData.objects.get(user=user, active=True)
                 except ObjectDoesNotExist:
@@ -71,6 +78,23 @@ def CheckForSubscriptionRenewals():
                     a = UserSubscription.objects.create(**dat1)
                     a.save()
 
+
+# def AutoCreateCoachGroup():
+#     '''
+#     A startup task that creates the Coach usergroup.
+#     '''
+#     from django.contrib.auth.models import Group
+#     new_group, created = Group.objects.get_or_create(name='Coach')
+#     print("Coach Usergroup Ready")
+
+'''
+The Below code is largely taken from the documentation for the
+django-apscheduler library, a library that does some integration
+of the apscheduler library with django.
+
+
+
+'''
 
 
 # The `close_old_connections` decorator ensures that database connections, that have become
@@ -101,12 +125,25 @@ def InitScheduler():
 
     scheduler.add_job(
         CheckForSubscriptionRenewals,
-        trigger=CronTrigger(hour="*/12"),  # Every 10 seconds
-        id="my_job",  # The `id` assigned to each job MUST be unique
+        trigger=CronTrigger(hour="*/12"),
+        id="AutoRenewalCheck",
         max_instances=1,
         replace_existing=True,
     )
-    logger.info("Added job 'my_job'.")
+    logger.info("Added job 'AutoRenewalCheck'.")
+
+    tz = datetime.now().astimezone().tzinfo
+    # scheduler.add_job(
+    #     AutoCreateCoachGroup,
+    #     trigger=DateTrigger(
+    #         run_date=datetime.now() + timedelta(seconds=30),
+    #         timezone=tz
+    #     ),
+    #     id="CoachUsergroupCheck",
+    #     max_instances=1,
+    #     replace_existing=True
+    # )
+    # logger.info("Added job 'CoachUsergroupCheck'.")
 
     scheduler.add_job(
         delete_old_job_executions,

@@ -164,6 +164,35 @@ class AddSubscription(APIView):
 
         return Response({'Thank you for your purchase'}, status=200)
 
+def RemoveAndShiftUnpaidSubs(user, start_date) -> (datetime, int):
+    '''
+    Removes all future recurring and unpaid subscriptions and
+    shifts any paid and non-recurring subscriptions down
+    :param user:
+    :param start_date:
+    :return:
+    '''
+    usubs = UserSubscription.objects.filter(
+        start_time__gt=timezone.now(),
+        user=user).order_by('start_time')
+
+    subsList = []
+
+    for sub in usubs:
+        if sub.payment_time is None:
+            sub.delete()
+        else:
+            subsList.append(sub)
+
+    nextDate = start_date
+    for sub in subsList:
+        sub.start_time = nextDate
+        dur = sub.subscription.duration
+        nextDate = nextDate + dur
+        sub.end_time = nextDate
+        sub.save()
+
+    return nextDate, len(subsList)
 
 def RemoveAndShiftUserSubs(user, start_date) -> (datetime, int):
     '''
@@ -331,51 +360,6 @@ class GetAllUserSubscriptions(ListAPIView):
         p.append(filt)
 
         self.requestParams = p
-
-
-def UpdateUserSubscription(user: User):
-    '''
-    Updates recurrence of User Subscriptions
-    :param user:
-    :return:
-    '''
-
-    now = timezone.now()
-
-    qs = UserSubscription.objects.\
-        filter(start_time__gt=now, user=user).\
-        order_by('-start_time')
-
-    num = qs.count()
-
-    lastSub = qs.first()
-    if lastSub.recurring:
-        try:
-            userPaymentData = UserPaymentData.objects.get(user=user, active=True)
-            sub = lastSub.subscription
-            next = lastSub.start_time
-
-            diff = RECURRENCE_BUFFER - num
-            for i in range(diff):
-                now = next
-                next = now + sub.duration
-                dat = {
-                    'user': user,
-                    'subscription': sub,
-                    'payment_time': None,
-                    'start_time': now,
-                    'end_time': next,
-                    'recurring': True,
-                    'payment_detail': userPaymentData
-                }
-
-                uSub = UserSubscription.objects.create(**dat)
-                uSub.save()
-
-        except ObjectDoesNotExist:
-            lastSub.recurring = False
-            lastSub.save()
-            return
 
 
 
