@@ -77,6 +77,7 @@ class GymClassSerializer(serializers.ModelSerializer):
             'end_time',
             'last_modified'
         ]
+        depth = 1
 
 
 class GymClassScheduleSerializer(serializers.ModelSerializer):
