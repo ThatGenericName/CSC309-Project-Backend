@@ -30,10 +30,13 @@ class Amenity(models.Model):
     quantity = models.IntegerField(null=False)
     tgen = models.BooleanField(null=False, default=False)
 
+
 class StudioSearchHash(models.Model):
     hash = models.CharField(null=False, max_length=17)
     search_date = models.DateTimeField(auto_now_add=True)
-class StudioSearchTemp(models.Model): # This is so jank
+
+
+class StudioSearchTemp(models.Model):  # This is so jank
     studio = models.ForeignKey(Studio, null=False, on_delete=models.CASCADE)
     searchkey = models.ForeignKey(StudioSearchHash, on_delete=models.CASCADE)
     dist = models.FloatField(null=False, default=0)
@@ -59,6 +62,7 @@ class StudioSerializer(serializers.ModelSerializer):
 
 class ImageRepSerializer(serializers.ModelSerializer):
     studio = StudioSerializer
+
     class Meta:
         model = ImageRep
         fields = [
@@ -66,8 +70,10 @@ class ImageRepSerializer(serializers.ModelSerializer):
             'image',
         ]
 
+
 class AmenitySerializer(serializers.ModelSerializer):
     studio = StudioSerializer
+
     class Meta:
         model = Amenity
         fields = [
