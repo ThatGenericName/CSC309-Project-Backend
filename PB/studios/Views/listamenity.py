@@ -27,6 +27,7 @@ class ListAmenity(APIView):
 
     permission_classes = [IsAuthenticated]
 
+
     def get(self, request: Request, *args, **kwargs):
 
         pk = kwargs['pk']

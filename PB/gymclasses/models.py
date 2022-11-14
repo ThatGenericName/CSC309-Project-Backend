@@ -14,15 +14,12 @@ dur = timedelta(days=30)
 class GymClass(models.Model):
     studio = models.ForeignKey(Studio, on_delete=models.CASCADE)
     name = models.CharField(null=False, max_length=255)
-    coach = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    enrollment_capacity = models.IntegerField(default=10)
-    enrollment_count = models.IntegerField(default=0)
     description = models.TextField(null=True)
     keywords = models.TextField(null=True)
-    start_datetime = models.DateField(null=False, auto_now=False, auto_now_add=False,
-                                      default=timezone.now)
-    end_datetime = models.DateField(null=False, auto_now=False, auto_now_add=False,
-                                    default=timezone.now() + dur)
+    earliest_date = models.DateField(null=False, auto_now=False, auto_now_add=False,
+                                     default=timezone.now)
+    last_date = models.DateField(null=False, auto_now=False, auto_now_add=False,
+                                 default=timezone.now() + dur)
     day = models.CharField(null=False, max_length=255, default="Monday")
     start_time = models.TimeField(null=False, auto_now=False, auto_now_add=False,
                                   default=datetime.time(9, 00, 00))
@@ -30,16 +27,17 @@ class GymClass(models.Model):
                                 default=datetime.time(10, 00, 00))
     last_modified = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        day = self.start_datetime.day
-        month = self.start_datetime.month
-        return f"{self.name} at {self.studio}, {day}-{month}"
-
-
 class GymClassSchedule(models.Model):
     date = models.DateField(null=False, auto_now=False, auto_now_add=False,
                             default=timezone.now)
     parent_class = models.ForeignKey(GymClass, on_delete=models.CASCADE, default="")
+    coach = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    enrollment_capacity = models.IntegerField(default=10)
+    enrollment_count = models.IntegerField(default=0)
+    start_time = models.DateTimeField(null=False, auto_now=False, auto_now_add=False,
+                                      default=datetime.time(9, 00, 00))
+    end_time = models.DateTimeField(null=False, auto_now=False, auto_now_add=False,
+                                    default=datetime.time(10, 00, 00))
 
 
 """
