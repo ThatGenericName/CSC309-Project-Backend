@@ -1,15 +1,17 @@
 from datetime import timedelta, datetime
 import datetime
 
+from django.db import models
 from django.utils import timezone
 from rest_framework import serializers
+from rest_framework.authtoken.admin import User
+
+from studios.models import Studio, StudioSerializer
 
 # Create your models here.
-from PB.studios.models import *
-from PB.accounts.models import *
+
 
 dur = timedelta(days=30)
-
 
 class GymClass(models.Model):
     studio = models.ForeignKey(Studio, on_delete=models.CASCADE)
@@ -35,19 +37,28 @@ class GymClassSchedule(models.Model):
     enrollment_capacity = models.IntegerField(default=10)
     enrollment_count = models.IntegerField(default=0)
     start_time = models.DateTimeField(null=False, auto_now=False, auto_now_add=False,
-                                      default=datetime.time(9, 00, 00))
+                                      default=timezone.now)
     end_time = models.DateTimeField(null=False, auto_now=False, auto_now_add=False,
-                                    default=datetime.time(10, 00, 00))
+                                    default=timezone.now)
 
 
 """
+
 Serializer
 """
+class CoachSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'first_name',
+            'last_name',
+            'email'
+        ]
 
 
 class GymClassSerializer(serializers.ModelSerializer):
     studio = StudioSerializer
-    coach = UserExtendedSerializer
+    coach = CoachSerializer
 
     class Meta:
         model = GymClass

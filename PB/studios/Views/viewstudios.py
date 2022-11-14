@@ -54,20 +54,29 @@ class ViewStudios(ListAPIView):
     def filter_queryset(self, qs: QuerySet):
         #qs = Studio.objects.all()
         q = []
+
+        qn = []
         for n in self.qStudioName:
-            q.append(qs.filter(name__contains=n).distinct())
+            qn.append(qs.filter(name__contains=n).distinct())
+        q.append(reduce(operator.or_, qn))
 
+        qa = []
         for at in self.qAmenitiesType:
-            q.append(qs.filter(amenity__type__contains=at).distinct())
+            qa.append(qs.filter(amenity__type__contains=at).distinct())
+        q.append(reduce(operator.or_, qa))
 
-        # for cln in self.qClassName:
-        #     q.append(qs.filter(gymclass__name__contains=cln).distinct())
-        #
-        # for chn in self.qCoachName:
-        #     q.append(qs.filter(
-        #         gymclass__gymclassoccurence__coach__first_name=chn[0],
-        #         gymclass__gymclassoccurence__coach__last_name=chn[1]
-        #     ))
+        qcln = []
+        for cln in self.qClassName:
+            qcln.append(qs.filter(gymclass__name__contains=cln).distinct())
+        q.append(reduce(operator.or_, qcln))
+
+        qchn = []
+        for chn in self.qCoachName:
+            qchn.append(qs.filter(
+                gymclass__gymclassschedule__coach__first_name=chn[0],
+                gymclass__gymclassschedule__coach__last_name=chn[1]
+            ).distinct())
+        q.append(reduce(operator.or_, qchn))
 
         f = reduce(operator.and_, q)
         return f

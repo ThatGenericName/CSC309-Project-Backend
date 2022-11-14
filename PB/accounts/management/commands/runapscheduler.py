@@ -3,6 +3,7 @@ import logging
 from datetime import datetime, timedelta
 
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.date import DateTrigger
 from django.conf import settings
 
 from apscheduler.triggers.cron import CronTrigger
@@ -17,11 +18,20 @@ from PB.utility import VerifyPayment
 from accounts.models import InternalUserPaymentDataSerializer, \
     UserExtension, \
     UserPaymentData, UserSubscription
+from studios.models import StudioSearchHash
 
 logger = logging.getLogger(__name__)
 
 REFRESH_DUR = timedelta(hours=16)
+SSH_DUR = timedelta(hours=24)
 
+@util.close_old_connections
+def ClearOldSearchHash():
+    minH = timezone.now() - SSH_DUR
+    StudioSearchHash.objects.filter(search_date__lt=minH).delete()
+
+
+@util.close_old_connections
 def CheckForSubscriptionRenewals():
 
     print('checking for subscriptions that need renewals')
@@ -78,14 +88,14 @@ def CheckForSubscriptionRenewals():
                     a = UserSubscription.objects.create(**dat1)
                     a.save()
 
-
-# def AutoCreateCoachGroup():
-#     '''
-#     A startup task that creates the Coach usergroup.
-#     '''
-#     from django.contrib.auth.models import Group
-#     new_group, created = Group.objects.get_or_create(name='Coach')
-#     print("Coach Usergroup Ready")
+@util.close_old_connections
+def AutoCreateCoachGroup():
+    '''
+    A startup task that creates the Coach usergroup.
+    '''
+    from django.contrib.auth.models import Group
+    new_group, created = Group.objects.get_or_create(name='Coach')
+    print("Coach Usergroup Ready")
 
 '''
 The Below code is largely taken from the documentation for the
@@ -119,11 +129,15 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         InitScheduler()
 
+SCHEDULER = None
 def InitScheduler():
-    scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
-    scheduler.add_jobstore(DjangoJobStore(), "default")
+    global SCHEDULER
+    if SCHEDULER is None:
+        SCHEDULER = BackgroundScheduler(timezone=settings.TIME_ZONE)
 
-    scheduler.add_job(
+    SCHEDULER.add_jobstore(DjangoJobStore(), "default")
+
+    SCHEDULER.add_job(
         CheckForSubscriptionRenewals,
         trigger=CronTrigger(hour="*/12"),
         id="AutoRenewalCheck",
@@ -132,20 +146,29 @@ def InitScheduler():
     )
     logger.info("Added job 'AutoRenewalCheck'.")
 
-    tz = datetime.now().astimezone().tzinfo
-    # scheduler.add_job(
-    #     AutoCreateCoachGroup,
-    #     trigger=DateTrigger(
-    #         run_date=datetime.now() + timedelta(seconds=30),
-    #         timezone=tz
-    #     ),
-    #     id="CoachUsergroupCheck",
-    #     max_instances=1,
-    #     replace_existing=True
-    # )
-    # logger.info("Added job 'CoachUsergroupCheck'.")
+    SCHEDULER.add_job(
+        ClearOldSearchHash,
+        trigger=CronTrigger(hour="*/12"),
+        id="ClearOldSearchHash",
+        max_instances=1,
+        replace_existing=True,
+    )
+    logger.info("Added job 'ClearOldSearchHash'.")
 
-    scheduler.add_job(
+    tz = datetime.now().astimezone().tzinfo
+    SCHEDULER.add_job(
+        AutoCreateCoachGroup,
+        trigger=DateTrigger(
+            run_date=datetime.now() + timedelta(seconds=30),
+            timezone=tz
+        ),
+        id="CoachUsergroupCheck",
+        max_instances=1,
+        replace_existing=True
+    )
+    logger.info("Added job 'CoachUsergroupCheck'.")
+
+    SCHEDULER.add_job(
         delete_old_job_executions,
         trigger=CronTrigger(
             day_of_week="mon", hour="00", minute="00"
@@ -160,10 +183,10 @@ def InitScheduler():
 
     try:
         logger.info("Starting scheduler...")
-        scheduler.start()
+        SCHEDULER.start()
     except KeyboardInterrupt:
         logger.info("Stopping scheduler...")
-        scheduler.shutdown()
+        SCHEDULER.shutdown()
         logger.info("Scheduler shut down successfully!")
 
 
