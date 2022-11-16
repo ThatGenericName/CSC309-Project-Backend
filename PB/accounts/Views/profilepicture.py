@@ -1,3 +1,4 @@
+import rest_framework.parsers
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import FileResponse
 from rest_framework.permissions import IsAuthenticated
@@ -10,7 +11,6 @@ from accounts.models import UserExtension
 
 import os
 from django.conf import settings
-import base64
 
 
 # Create your views here.
@@ -20,25 +20,36 @@ class AddProfilePicture(APIView):
     Adds a profile picture to an authenticated user
     '''
 
+    parser_classes = [
+        rest_framework.parsers.JSONParser,
+        rest_framework.parsers.FormParser,
+        rest_framework.parsers.MultiPartParser
+    ]
+
     permission_classes = [IsAuthenticated]
 
     def post(self, request: Request, ):
+
+        if 'avatar' not in request.FILES:
+            return Response({'error', 'Image was not provided'}, status=400)
+
         f = request.FILES['avatar']
 
         if ValidatePicture(f):
             userExt = UserExtension.objects.get(user=request.user)
             oldf = userExt.profile_pic
-            if oldf is not None:
+            if oldf:
                 fp = oldf.path
                 if os.path.exists(fp):
                     os.remove(fp)
             userExt.profile_pic = f
             userExt.save()
-            return Response(status=200)
+            fn = userExt.profile_pic.path.split(os.sep)[-1]
+            return Response({'fileName': fn}, status=200)
         else:
-            return Response({"Submit a valid picture"}, status=200)
+            return Response({'error': "Submit a valid picture"}, status=200)
 
-PROFILE_PICTURE_PATH = "accounts/icon/"
+PROFILE_PICTURE_PATH = "accounts" + os.sep + "icon" + os.sep
 
 class ViewProfilePicture(APIView):
 
@@ -50,7 +61,7 @@ class ViewProfilePicture(APIView):
     def get(self, request, *args, **kwargs):
 
         fn = kwargs['image_uuid']
-        fp1 = PROFILE_PICTURE_PATH + fn
+        fp1 = os.path.join(PROFILE_PICTURE_PATH, fn)
 
         fp = os.path.join(settings.BASE_DIR, fp1)
         try:
@@ -58,7 +69,7 @@ class ViewProfilePicture(APIView):
             return FileResponse(f, status=200)
         except FileNotFoundError as e:
             print(e)
-            return Response({"file does not exist"}, status=404)
+            return Response({'error': "file does not exist"}, status=404)
 
 class ClearProfilePicture(APIView):
 
@@ -73,4 +84,4 @@ class ClearProfilePicture(APIView):
         if os.path.exists(fp):
             os.remove(fp)
 
-        return Response(status=200)
+        return Response({'success': 'profile picture cleared'}, status=200)
