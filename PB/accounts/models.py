@@ -8,7 +8,8 @@ from django.contrib.auth.models import Group, User
 from rest_framework import serializers
 from rest_framework.permissions import BasePermission
 
-from gymclasses.models import GymClass
+from gymclasses.models import GymClass, GymClassSchedule, \
+    GymClassScheduleSerializer
 from subscriptions.models import Subscription
 
 # Create your models here.
@@ -33,7 +34,7 @@ class UserExtension(models.Model):
     profile_pic = models.ImageField(blank=True,
                                     upload_to=RandomNameGen)
     last_modified = models.DateTimeField(auto_now=True)
-    enrolled_classes = models.ManyToManyField(GymClass, blank=True)
+    enrolled_classes = models.ManyToManyField(GymClassSchedule, blank=True)
     active_subscription = models.OneToOneField("UserSubscription", null=True,
                                                on_delete=models.SET_NULL)
 
@@ -96,6 +97,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserExtendedSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+    enrolled_classes = GymClassScheduleSerializer()
 
     class Meta:
         model = UserExtension

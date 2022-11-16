@@ -267,7 +267,6 @@ class GetSubscription(APIView):
 
     def get(self, request, *args, **kwargs):
         subId = kwargs['pk']
-        UpdateUserSubscription(self.request.user)
         try:
             sub = UserSubscription.objects.get(id=subId)
         except ObjectDoesNotExist:
@@ -315,27 +314,25 @@ class GetAllUserSubscriptions(ListAPIView):
 
     def get_queryset(self):
         self.ProcessRequestParams()
-        UpdateUserSubscription(self.request.user)
         qs = UserSubscription.objects\
-            .filter(user=self.request.user)\
-            .order_by(self.requestParams[0])
+            .filter(user=self.request.user)
 
-        if self.requestParams[2] == 1:
-            uext = GetUserExtension(self.request.user)
-            active = uext.active_subscription
-            if active is None:
-                date = timezone.now()
-            else:
-                date = active.start_time
-            qs = qs.filter(start_time__lt=date)
-        elif self.requestParams[2] == 2:
-            uext = GetUserExtension(self.request.user)
-            active = uext.active_subscription
-            if active is None:
-                date = timezone.now()
-            else:
-                date = active.start_time
-            qs = qs.filter(start_time__gte=date)
+        if self.requestParams[0] == 0:
+            qs = qs.order_by('start_time')
+        else:
+            qs = qs.order_by('-start_time')
+
+        searchTime = timezone.now()
+
+        user = self.request.user
+        uext = GetUserExtension(user)
+        if uext.active_subscription is not None:
+            searchTime = uext.active_subscription.start_time
+
+        if self.requestParams[1] == 1:
+            qs = qs.filter(start_time__lt=searchTime)
+        elif self.requestParams[1] == 2:
+            qs = qs.filter(start_time__gte=searchTime)
 
         return qs
 
@@ -344,10 +341,10 @@ class GetAllUserSubscriptions(ListAPIView):
     def ProcessRequestParams(self):
         p = []
         dat = self.request.data
-        sort = '-start_time'
+        sort = 1
         if 'sort' in dat:
             if dat['sort'].lower() == 'asc':
-                p.append('start_time')
+                sort = 0
 
         filt = 0
         if 'filter' in dat:
@@ -360,8 +357,3 @@ class GetAllUserSubscriptions(ListAPIView):
         p.append(filt)
 
         self.requestParams = p
-
-
-
-
-

@@ -80,6 +80,8 @@ class GymClassSerializer(serializers.ModelSerializer):
         depth = 1
 
 
+
+
 class GymClassScheduleSerializer(serializers.ModelSerializer):
     parent_class = GymClassSerializer
 
@@ -89,3 +91,5 @@ class GymClassScheduleSerializer(serializers.ModelSerializer):
             'date',
             'parent_class',
         ]
+
+
