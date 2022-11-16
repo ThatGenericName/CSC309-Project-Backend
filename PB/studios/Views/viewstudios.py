@@ -58,27 +58,34 @@ class ViewStudios(ListAPIView):
         qn = []
         for n in self.qStudioName:
             qn.append(qs.filter(name__contains=n).distinct())
-        q.append(reduce(operator.or_, qn))
+        if len(qn):
+            q.append(reduce(operator.or_, qn))
 
         qa = []
         for at in self.qAmenitiesType:
             qa.append(qs.filter(amenity__type__contains=at).distinct())
-        q.append(reduce(operator.or_, qa))
+        if len(qa):
+            q.append(reduce(operator.or_, qa))
 
         qcln = []
         for cln in self.qClassName:
             qcln.append(qs.filter(gymclass__name__contains=cln).distinct())
-        q.append(reduce(operator.or_, qcln))
+        if len(qcln):
+            q.append(reduce(operator.or_, qcln))
 
         qchn = []
         for chn in self.qCoachName:
             qchn.append(qs.filter(
-                gymclass__gymclassschedule__coach__first_name=chn[0],
-                gymclass__gymclassschedule__coach__last_name=chn[1]
+                gymclass__gymclassschedule__coach__first_name__contains=chn[0],
+                gymclass__gymclassschedule__coach__last_name__contains=chn[1]
             ).distinct())
-        q.append(reduce(operator.or_, qchn))
+        if len(qchn):
+            q.append(reduce(operator.or_, qchn))
 
-        f = reduce(operator.and_, q)
+        if len(q):
+            f = reduce(operator.and_, q)
+        else:
+            f = qs
         return f
 
     qStudioName = None
@@ -93,18 +100,21 @@ class ViewStudios(ListAPIView):
 
         if 'n' in params:
             a = params['n'].split(',')
-            #q = GenerateQObjectsContainsAnd('name', *a)
-            self.qStudioName = a
+            self.qStudioName = [i for i in a if len(i)]
+        else:
+            self.qStudioName = []
 
         if 'a' in params:
             a = params['a'].split(',')
-            #q = GenerateQObjectsContainsAnd('amenity__type', *a)
-            self.qAmenitiesType = a
+            self.qAmenitiesType = [i for i in a if len(i)]
+        else:
+            self.qAmenitiesType = []
 
         if 'cln' in params:
             a = params['cln'].split(',')
-            #q = GenerateQObjectsContainsAnd('gymclass__name', *a)
-            self.qClassName = a
+            self.qClassName = [i for i in a if len(i)]
+        else:
+            self.qClassName = []
 
         if 'chn' in params:
             a = params['chn'].split(',')
@@ -113,11 +123,12 @@ class ViewStudios(ListAPIView):
                 ns = name.split(' ')
                 fn = ns[0] if len(ns[0]) else ''
                 ln = ns[1] if len(ns) > 1 and len(ns[1]) else ''
-                fl.append((fn, ln))
-            #qObj = Q(gymclass__gymclassoccurence__coach__first_name=fn, gymclass__gymclassoccurence__coach__last_name=ln)
+                if not len(fn) and not len(ln):
+                    fl.append((fn, ln))
             self.qCoachName = fl
+        else:
+            self.qCoachName = []
 
-        # location data:
         if 'location' in self.request.data:
             a = self.request.data['location'].split(',')
             if not (IsFloat(a[0]) and IsFloat(a[1])):
@@ -143,14 +154,17 @@ class ViewStudios(ListAPIView):
             ssh = StudioSearchHash.objects.create(hash=search_hash)
             q = Studio.objects.all()
             for studio in q:
-                a = studio.geo_loc.split(',')
-                studioLoc = (float(a[0]), float(a[1]))
-                dist = GD(studioLoc, self.location).km
-                StudioSearchTemp.objects.create(
+                dist = 0
+                if len(studio.geo_loc):
+                    a = studio.geo_loc.split(',')
+                    studioLoc = (float(a[0]), float(a[1]))
+                    dist = GD(studioLoc, self.location).km
+                sst = StudioSearchTemp.objects.create(
                     studio=studio,
                     dist=dist,
                     searchkey=ssh
                 )
+                sst.save()
 
         self.search_hash_obj = ssh
 

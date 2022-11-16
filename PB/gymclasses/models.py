@@ -42,7 +42,7 @@ class GymClassSchedule(models.Model):
                                       default=timezone.now)
     end_time = models.DateTimeField(null=False, auto_now=False, auto_now_add=False,
                                     default=timezone.now)
-    is_cancelled = models.BooleanField(default=False)
+    is_cancelled = models.BooleanField(default=False, null=False)
 
 
 """
@@ -79,8 +79,6 @@ class GymClassSerializer(serializers.ModelSerializer):
             'last_modified'
         ]
         depth = 1
-
-
 
 
 class GymClassScheduleSerializer(serializers.ModelSerializer):

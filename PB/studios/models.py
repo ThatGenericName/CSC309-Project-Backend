@@ -1,5 +1,6 @@
 import uuid
 
+import rest_framework.fields
 from django.db import models
 
 # Create your models here.
@@ -46,6 +47,10 @@ class StudioSearchTemp(models.Model):  # This is so jank
 Serializers
 '''
 
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ImageRep
+        fields = ['image', 'studio']
 
 class StudioSerializer(serializers.ModelSerializer):
     class Meta:
@@ -58,6 +63,16 @@ class StudioSerializer(serializers.ModelSerializer):
             'phone_num',
             'last_modified',
         ]
+
+    def to_representation(self, instance):
+        dat = super().to_representation(instance)
+
+        imgQs = ImageRep.objects.filter(studio=instance)
+        imageRepSerials = [ImageSerializer(imgRep).data for imgRep in imgQs]
+        imageNames = [irs['image'] for irs in imageRepSerials]
+        dat['images'] = imageNames
+
+        return dat
 
 
 class ImageRepSerializer(serializers.ModelSerializer):
