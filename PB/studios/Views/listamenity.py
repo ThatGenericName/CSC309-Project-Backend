@@ -1,4 +1,6 @@
 import rest_framework.parsers
+from rest_framework.generics import ListAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -10,7 +12,11 @@ from PB.utility import *
 from ..models import *
 
 
-class ListAmenity(APIView):
+class ListAmenityPagination(PageNumberPagination):
+    page_size = 10
+
+
+class ListAmenity(ListAPIView):
     '''
     adds amenity to db
     '''
@@ -20,28 +26,16 @@ class ListAmenity(APIView):
         rest_framework.parsers.FormParser,
         rest_framework.parsers.MultiPartParser
     ]
-    keys = [
-        'type',
-        'quantity'
-    ]
 
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    pagination_class = ListAmenityPagination
+    model = Amenity
+    serializer_class = AmenitySerializer
 
 
-    def get(self, request: Request, *args, **kwargs):
+    def get_queryset(self):
 
-        pk = kwargs['pk']
-        if not Studio.objects.filter(id=pk):
-            return Response({"Wrong Studio Id"})
+        pk = self.kwargs['pk']
+        qs = Amenity.objects.filter(studio_id=pk)
 
-        lst = []
-
-        amenity = Amenity.objects.filter(studio_id=pk)
-
-        for item in amenity:
-            lst.append({
-                "type": item.type,
-                "quantity": item.quantity
-            })
-
-        return Response(lst)
+        return qs

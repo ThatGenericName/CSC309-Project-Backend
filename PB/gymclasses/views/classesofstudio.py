@@ -1,8 +1,11 @@
-import datetime as dt
-from datetime import datetime, timedelta
-from pytz import timezone
+import datetime
+from itertools import chain
+import pytz
+from django.utils import timezone
 import rest_framework.parsers
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from rest_framework.generics import ListAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -11,14 +14,19 @@ import rest_framework.parsers
 
 from PB.utility import ValidateInt, ValidatePhoneNumber
 from accounts.models import UserExtension, User
-from gymclasses.models import GymClass, GymClassSchedule
+from gymclasses.models import *
 from studios.models import Studio
 
 # Create your views here.
+
 DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 
-class ClassesofStudio(APIView):
+class ClassesofStudioPagination(PageNumberPagination):
+    page_size = 10
+
+
+class ClassesofStudio(ListAPIView):
     '''
     edits a specific profile
     '''
@@ -30,63 +38,23 @@ class ClassesofStudio(APIView):
     ]
 
     # permission_classes = [IsAuthenticated]
+    pagination_class = ClassesofStudioPagination
+    model = GymClassSchedule
+    serializer_class = GymClassScheduleSerializer
 
-    def get(self, request: Request, *args, **kwargs):
+    def get_queryset(self):
 
-        studio_id = kwargs['studio_id']
-        tz = timezone('EST')
+        studio_id = self.kwargs['studio_id']
 
         try:
             studio = Studio.objects.get(id=studio_id)
         except ObjectDoesNotExist:
             return Response({'error': 'Studio Class was not found'}, status=404)
 
-        classes = GymClass.objects.filter(studio_id=studio)
-        day_now = datetime.now().strftime("%A")
+        classes = GymClassSchedule.objects.filter(parent_class__studio=studio)
 
-        list_of_days = DAYS[DAYS.index(day_now):] + \
-                       DAYS[:DAYS.index(day_now)]
+        qs = classes.filter(start_time__gt=timezone.now())
+        qs = qs.filter(end_time__gt=timezone.now())
+        qs = qs.filter(is_cancelled=False)
 
-        lst = []
-        time_now = datetime.now(tz).time()
-
-        for item in list_of_days:
-            class_for_day = classes.filter(day=item).\
-                order_by('start_time')
-
-            for gym_class in class_for_day:
-                if item == day_now and gym_class.start_time < time_now:
-                    continue
-                lst.append({
-                    "name": gym_class.name,
-                    "coach": gym_class.coach.username,
-                    "enrollment_capacity": gym_class.enrollment_capacity,
-                    "enrollment_count": gym_class.enrollment_count,
-                    "description": gym_class.description,
-                    "keywords": gym_class.keywords,
-                    "Start Date": gym_class.start_datetime.strftime("%m/%d/%Y"),
-                    "End Date": gym_class.end_datetime.strftime("%m/%d/%Y"),
-                    "day": gym_class.day,
-                    "Start Time": gym_class.start_time.strftime("%H:%M"),
-                    "End Time": gym_class.end_time.strftime("%H:%M"),
-                })
-
-        class_for_day = classes.filter(day=day_now).order_by('start_time')
-
-        for gym_class in class_for_day:
-            if gym_class.start_time < time_now:
-                lst.append({
-                    "name": gym_class.name,
-                    "coach": gym_class.coach.username,
-                    "enrollment_capacity": gym_class.enrollment_capacity,
-                    "enrollment_count": gym_class.enrollment_count,
-                    "description": gym_class.description,
-                    "keywords": gym_class.keywords,
-                    "Start Date": gym_class.start_datetime.strftime("%m/%d/%Y"),
-                    "End Date": gym_class.end_datetime.strftime("%m/%d/%Y"),
-                    "day": gym_class.day,
-                    "Start Time": gym_class.start_time.strftime("%H:%M"),
-                    "End Time": gym_class.end_time.strftime("%H:%M"),
-                })
-
-        return Response(lst)
+        return qs

@@ -14,6 +14,7 @@ from accounts.models import UserExtension, User
 from gymclasses.models import GymClass, GymClassSchedule
 from studios.models import Studio
 
+
 # Create your views here.
 
 
@@ -40,7 +41,12 @@ class DeleteGymClass(APIView):
         except ObjectDoesNotExist:
             return Response({'error': 'Gym Class was not found'}, status=404)
 
-        GymClassSchedule.objects.filter(parent_class_id=gym_class).delete()
-        gym_class.delete()
+        if "delete" in data and data['delete']:
+            GymClassSchedule.objects.filter(parent_class_id=gym_class).delete()
+            gym_class.delete()
+        else:
+            for item in GymClassSchedule.objects.filter(parent_class_id=gym_class):
+                setattr(item, "is_cancelled", True)
+                item.save()
 
         return Response({"success": True})

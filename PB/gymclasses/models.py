@@ -13,6 +13,7 @@ from studios.models import Studio, StudioSerializer
 
 dur = timedelta(days=30)
 
+
 class GymClass(models.Model):
     studio = models.ForeignKey(Studio, on_delete=models.CASCADE)
     name = models.CharField(null=False, max_length=255)
@@ -29,6 +30,7 @@ class GymClass(models.Model):
                                 default=datetime.time(10, 00, 00))
     last_modified = models.DateTimeField(auto_now=True)
 
+
 class GymClassSchedule(models.Model):
     date = models.DateField(null=False, auto_now=False, auto_now_add=False,
                             default=timezone.now)
@@ -40,12 +42,15 @@ class GymClassSchedule(models.Model):
                                       default=timezone.now)
     end_time = models.DateTimeField(null=False, auto_now=False, auto_now_add=False,
                                     default=timezone.now)
+    is_cancelled = models.BooleanField(default=False)
 
 
 """
 
 Serializer
 """
+
+
 class CoachSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -58,20 +63,16 @@ class CoachSerializer(serializers.ModelSerializer):
 
 class GymClassSerializer(serializers.ModelSerializer):
     studio = StudioSerializer
-    coach = CoachSerializer
 
     class Meta:
         model = GymClass
         fields = [
             'studio',
             'name',
-            'coach',
-            'enrollment_capacity',
-            'enrollment_count',
             'description',
             'keywords',
-            'start_datetime',
-            'end_datetime',
+            'earliest_date',
+            'last_date',
             'day',
             'start_time',
             'end_time',
@@ -84,12 +85,20 @@ class GymClassSerializer(serializers.ModelSerializer):
 
 class GymClassScheduleSerializer(serializers.ModelSerializer):
     parent_class = GymClassSerializer
+    coach = CoachSerializer
 
     class Meta:
         model = GymClassSchedule
         fields = [
             'date',
             'parent_class',
+            'coach',
+            'enrollment_capacity',
+            'enrollment_count',
+            'start_time',
+            'end_time',
+            'is_cancelled'
         ]
+        depth = 1
 
 
