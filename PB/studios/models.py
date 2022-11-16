@@ -20,7 +20,7 @@ class Studio(models.Model):
 
 
 class ImageRep(models.Model):
-    image = models.ImageField(upload_to="StudioImages/", null=False)
+    image = models.ImageField(upload_to="studios/studioimages/", null=False)
     studio = models.ForeignKey(Studio, on_delete=models.CASCADE, null=False)
 
 

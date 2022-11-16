@@ -25,7 +25,7 @@ class AddAmenity(APIView):
         'quantity'
     ]
 
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def post(self, request: Request, *args, **kwargs):
 

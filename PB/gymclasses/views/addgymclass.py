@@ -7,7 +7,7 @@ import rest_framework.parsers
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.validators import validate_email
 from django.utils import timezone
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -22,15 +22,14 @@ from studios.models import Studio
 
 KEYS = [
     'name',
-    'coach',
-    'enrollment_capacity',
     'description',
     'keywords',
-    'start_date',
-    'end_date',
+    'earliest_date',
+    'last_date',
     'day',
     'start_time',
-    'end_time'
+    'end_time',
+    'enrollment_capacity'
 ]
 
 
@@ -45,7 +44,7 @@ class CreateGymClass(APIView):
         rest_framework.parsers.MultiPartParser
     ]
 
-    # permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAdminUser]
 
     def post(self, request: Request, *args, **kwargs):
 
@@ -58,9 +57,12 @@ class CreateGymClass(APIView):
             return Response({'error': 'Studio was not found'}, status=404)
 
         try:
-            coach = User.objects.get(id=data['coach'])
+            coach = User.objects.get(id=1)
         except ObjectDoesNotExist:
             return Response({'error': 'Coach was not found'}, status=404)
+
+        # if not coach.groups.filter(name='Coach').exists():
+        #     return Response({'error': 'Coach was not found'}, status=404)
 
         errors = self.ValidateData(request.data)
 
@@ -70,11 +72,11 @@ class CreateGymClass(APIView):
         start_time = dt.datetime.strptime(data['start_time'], '%H:%M').time()
         end_time = dt.datetime.strptime(data['end_time'], '%H:%M').time()
 
-        start_date = datetime.strptime(data['start_date'], '%d/%m/%Y')
+        start_date = datetime.strptime(data['earliest_date'], '%d/%m/%Y')
         tz = pytz.timezone('America/Toronto')
         start_date = start_date.replace(tzinfo=tz)
 
-        end_date = datetime.strptime(data['end_date'], '%d/%m/%Y')
+        end_date = datetime.strptime(data['last_date'], '%d/%m/%Y')
         end_date = end_date.replace(tzinfo=tz)
 
         any_classes = False
@@ -98,12 +100,10 @@ class CreateGymClass(APIView):
         gymclass = GymClass.objects.create(
             studio=studio,
             name=data['name'],
-            coach=coach,
-            enrollment_capacity=data['enrollment_capacity'],
-            keywords=model_keywords,
             description=data['description'],
-            start_datetime=start_date,
-            end_datetime=end_date,
+            keywords=model_keywords,
+            earliest_date=start_date,
+            last_date=end_date,
             day=data['day'],
             start_time=start_time,
             end_time=end_time,
@@ -113,8 +113,20 @@ class CreateGymClass(APIView):
 
         for d in self.daterange(start_date, end_date):
             if d.strftime("%A") == data['day']:
+                s = datetime(year=d.year, month=d.month, day=d.day,
+                             hour=start_time.hour, minute=start_time.minute)
+                s = s.replace(tzinfo=tz)
+                e = datetime(year=d.year, month=d.month, day=d.day,
+                             hour=end_time.hour, minute=end_time.minute)
+                e = e.replace(tzinfo=tz)
+
                 gymschedule = GymClassSchedule.objects.create(date=d,
-                                                              parent_class=gymclass)
+                                                              parent_class=gymclass,
+                                                              coach=coach,
+                                                              enrollment_capacity=data[
+                                                                  "enrollment_capacity"],
+                                                              start_time=s,
+                                                              end_time=e)
                 gymschedule.save()
 
         return Response({"success": True})
@@ -137,29 +149,29 @@ class CreateGymClass(APIView):
             except ValueError:
                 errors['enrollment_capacity'] = "Wrong input format integer expected"
 
-        if 'start_date' not in errors:
+        if 'earliest_date' not in errors:
             try:
-                datetime.strptime(data['start_date'], '%d/%m/%Y')
+                datetime.strptime(data['earliest_date'], '%d/%m/%Y')
             except ValueError:
-                errors['start_date'] = "Wrong Start Date Format"
+                errors['earliest_date'] = "Wrong Start Date Format"
 
-        if 'start_date' not in errors:
-            start = datetime.strptime(data['start_date'], '%d/%m/%Y')
+        if 'earliest_date' not in errors:
+            start = datetime.strptime(data['earliest_date'], '%d/%m/%Y')
             present = datetime.now()
             if start <= present:
-                errors['start_date'] = "Start date must be later than the current date"
+                errors['earliest_date'] = "Earliest date must be later than the current date"
 
-        if 'end_date' not in errors:
+        if 'last_date' not in errors:
             try:
-                datetime.strptime(data['end_date'], '%d/%m/%Y').date()
+                datetime.strptime(data['last_date'], '%d/%m/%Y').date()
             except ValueError:
-                errors['end_date'] = "Wrong End Date Format"
+                errors['last_date'] = "Wrong End Date Format"
 
-        if 'end_date' not in errors:
-            start = datetime.strptime(data['start_date'], '%d/%m/%Y')
-            end = datetime.strptime(data['end_date'], '%d/%m/%Y')
+        if 'last_date' not in errors:
+            start = datetime.strptime(data['earliest_date'], '%d/%m/%Y')
+            end = datetime.strptime(data['last_date'], '%d/%m/%Y')
             if start >= end:
-                errors['end_date'] = "End date must be later than the Start date"
+                errors['last_date'] = "Last date must be later than the Start date"
 
         if 'start_time' not in errors:
             try:
