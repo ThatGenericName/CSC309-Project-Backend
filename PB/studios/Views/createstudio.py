@@ -38,12 +38,13 @@ class CreateStudio(APIView):
 
         geolocator = Nominatim(user_agent="studios")
         map_location = geolocator.geocode(data["address"], timeout=10)
+        geo_loc = str(map_location.latitude) + "," + str(map_location.longitude)
 
         studio = Studio(
             name=data['name'],
             address=data['address'],
             post_code=data['post_code'],
-            geo_loc=map_location,
+            geo_loc=geo_loc,
             phone_num=data['phone_num'])
 
         studio.save()

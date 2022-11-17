@@ -115,10 +115,8 @@ class CreateGymClass(APIView):
             if d.strftime("%A") == data['day']:
                 s = datetime(year=d.year, month=d.month, day=d.day,
                              hour=start_time.hour, minute=start_time.minute)
-                s = s.replace(tzinfo=tz)
                 e = datetime(year=d.year, month=d.month, day=d.day,
                              hour=end_time.hour, minute=end_time.minute)
-                e = e.replace(tzinfo=tz)
 
                 gymschedule = GymClassSchedule.objects.create(date=d,
                                                               parent_class=gymclass,
