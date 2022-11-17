@@ -8,6 +8,7 @@ from .views.addgymclass import CreateGymClass
 from .views.deletegymschedule import DeleteGymSchedule
 from .views.deletegymclass import DeleteGymClass
 from .views.classesofstudio import ClassesofStudio
+from .views.searchgymclassschedules import ViewGymClassSchedule
 
 app_name = 'gymclasses'
 
@@ -19,4 +20,5 @@ urlpatterns = [
          name='DeleteGymSchedule'),
     path('<int:gym_class>/delete/', DeleteGymClass.as_view(), name='DeleteGymClass'),
     path('studio/<int:studio_id>/list/', ClassesofStudio.as_view(), name='ClassesofStudio'),
+    path('', ViewGymClassSchedule.as_view(), name='ViewGymClassSchedule'),
 ]

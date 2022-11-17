@@ -49,8 +49,9 @@ class EditStudio(APIView):
 
         if data['address']:
             geolocator = Nominatim(user_agent="studios")
-            print(geolocator.geocode(data["address"], timeout=10))
-            setattr(studio, "geo_loc", geolocator.geocode(data["address"], timeout=10))
+            map_location = geolocator.geocode(data["address"], timeout=10)
+            geo_loc = str(map_location.latitude) + "," + str(map_location.longitude)
+            setattr(studio, "geo_loc", geo_loc)
 
         studio.save()
 
