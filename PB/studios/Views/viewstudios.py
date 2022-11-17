@@ -12,6 +12,7 @@ from django.db.models import Q, QuerySet
 from PB.utility import ClearOldDateCalculations, GenerateQObjectsContainsAnd
 from accounts.models import UserExtendedSerializer, UserExtension, \
     UserPaymentData, UserPaymentDataSerializer
+from gymclasses.models import GymClassSchedule
 from studios.models import Amenity, Studio, StudioSearchHash, StudioSearchTemp, \
     StudioSerializer
 from geopy.distance import geodesic as GD
@@ -75,10 +76,13 @@ class ViewStudios(ListAPIView):
 
         qchn = []
         for chn in self.qCoachName:
-            qchn.append(qs.filter(
-                gymclass__gymclassschedule__coach__first_name__contains=chn[0],
-                gymclass__gymclassschedule__coach__last_name__contains=chn[1]
-            ).distinct())
+            qs = Studio.objects.all()
+            qsfn = qs.filter(
+                gymclass__gymclassschedule__coach__first_name__contains=chn[0]).distinct()
+            qsln = qs.filter(
+                gymclass__gymclassschedule__coach__last_name__contains=chn[1]).distinct()
+            qsn = qsfn & qsln
+            qchn.append(qsn)
         if len(qchn):
             q.append(reduce(operator.or_, qchn))
 
@@ -123,7 +127,7 @@ class ViewStudios(ListAPIView):
                 ns = name.split(' ')
                 fn = ns[0] if len(ns[0]) else ''
                 ln = ns[1] if len(ns) > 1 and len(ns[1]) else ''
-                if not len(fn) and not len(ln):
+                if len(fn) or len(ln):
                     fl.append((fn, ln))
             self.qCoachName = fl
         else:
