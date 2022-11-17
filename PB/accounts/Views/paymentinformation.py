@@ -41,7 +41,7 @@ class AddPaymentInformation(APIView):
         errors = self.ValidateData(request.data.dict())
 
         if len(errors):
-            return Response(errors, status=200)
+            return Response(errors, status=400)
 
         try:
             upd = UserPaymentData.objects.get(user=request.user, active=True)
@@ -64,7 +64,7 @@ class AddPaymentInformation(APIView):
 
         self.UpdateFutureSubscriptions(nupd)
 
-        return Response({"success": True}, status=200)
+        return Response({"detail": "Payment method successfully added"}, status=200)
 
     cleanedData = {}
 
@@ -206,7 +206,7 @@ class GetPaymentInformation(APIView):
         try:
             paymentDat = UserPaymentData.objects.get(user=request.user, active=True)
         except ObjectDoesNotExist:
-            return Response("You do not have a payment method", status=200)
+            return Response("You do not have a payment method", status=404)
         dat = UserPaymentDataSerializer(paymentDat).data
 
         return Response(dat, status=200)

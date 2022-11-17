@@ -6,12 +6,13 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import GetUserExtension, UserExtension
+from gymclasses.models import GymClassScheduleSerializer, GymClassSerializer
 
 
 class AccountClassesPagination(PageNumberPagination):
     page_size = 10
 
-class ViewAccountClasses(ListAPIView):
+class ViewEnrolledClasses(ListAPIView):
 
     parser_classes = [
         rest_framework.parsers.JSONParser,
@@ -21,11 +22,11 @@ class ViewAccountClasses(ListAPIView):
 
     permission_classes = [IsAuthenticated]
     pagination_class = AccountClassesPagination
+    serializer_class = GymClassScheduleSerializer
 
-    def get(self, request, *args, **kwargs):
-
-
-        return Response()
+    # def get(self, request, *args, **kwargs):
+    #
+    #     return super().get(request, *args, **kwargs)
 
     requestParams = None
 
@@ -54,14 +55,14 @@ class ViewAccountClasses(ListAPIView):
         user = self.request.user
         uext = GetUserExtension(user)
         now = timezone.now()
-        if self.request[1] == 0:
+        if self.requestParams[1] == 0:
             qs = uext.enrolled_classes
-        elif self.request[1] == 1:
+        elif self.requestParams[1] == 1:
             qs = uext.enrolled_classes.filter(start_time__lt=now)
         else:
             qs = uext.enrolled_classes.filter(start_time__gte=now)
 
-        if self.request[0] == 0:
+        if self.requestParams[0] == 0:
             qs = qs.order_by('start_time')
         else:
             qs = qs.order_by('-start_time')

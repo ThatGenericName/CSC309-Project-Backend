@@ -25,7 +25,7 @@ class Login(APIView):
         errors = self.ValidateData(request.data)
 
         if len(errors):
-            return Response(errors)
+            return Response(errors, status=400)
         data = request.data
 
         user = authenticate(
@@ -33,7 +33,7 @@ class Login(APIView):
             password=data['password']
         )
         if user is None:
-           return Response({"error": "The Username or Password is invalid"})
+           return Response({"detail": "The Username or Password is invalid"}, status=401)
 
         if request.auth is not None:
             request.auth.delete()
@@ -54,7 +54,7 @@ class Login(APIView):
             )
             uext.save()
 
-        return Response({"token": token.key})
+        return Response({'detail': f'Token {token.key}'}, status=200)
 
     def ValidateData(self, data) -> dict:
         errors = {}

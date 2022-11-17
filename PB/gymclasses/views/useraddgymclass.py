@@ -24,9 +24,6 @@ KEYS = [
 ]
 
 class AddGymClassToUser(APIView):
-    '''
-    edits a specific profile
-    '''
 
     parser_classes = [
         rest_framework.parsers.JSONParser,
@@ -47,7 +44,7 @@ class AddGymClassToUser(APIView):
         now = timezone.now()
 
         if gclass.end_datetime < now:
-            return Response({'error': 'This class has already ended'})
+            return Response({'error': 'This class has already ended'}, status=401)
 
         user = request.user
         uext = UserExtension.objects.get(user=user)
@@ -61,7 +58,7 @@ class AddGymClassToUser(APIView):
             uext.save()
             return Response({'success': 'You have successfully enrolled in this class'}, status=200)
 
-        return Response({'error': 'This class if full'}, status=200)
+        return Response({'error': 'This class is full'}, status=401)
 
 
 class RemoveGymClassFromUser(APIView):
@@ -88,7 +85,7 @@ class RemoveGymClassFromUser(APIView):
 
         now = timezone.now()
         if gclass.end_datetime < now:
-            return Response({'error': 'This class has already ended'})
+            return Response({'error': 'This class has already ended'}, status=401)
 
         user = request.user
         uext = UserExtension.objects.get(user=user)

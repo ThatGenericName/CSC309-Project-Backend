@@ -67,6 +67,7 @@ class GymClassSerializer(serializers.ModelSerializer):
     class Meta:
         model = GymClass
         fields = [
+            'id',
             'studio',
             'name',
             'description',
@@ -80,14 +81,19 @@ class GymClassSerializer(serializers.ModelSerializer):
         ]
         depth = 1
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        return data
 
 class GymClassScheduleSerializer(serializers.ModelSerializer):
-    parent_class = GymClassSerializer
-    coach = CoachSerializer
+    parent_class = GymClassSerializer()
+    coach = CoachSerializer()
 
     class Meta:
         model = GymClassSchedule
         fields = [
+            'id',
             'date',
             'parent_class',
             'coach',

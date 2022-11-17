@@ -37,7 +37,7 @@ class SetUserCoach(APIView):
         except ObjectDoesNotExist:
             return Response({"error": "User does not exist"}, status=404)
 
-        return Response({"success": "User has been set as a coach"}, status=200)
+        return Response({'detail': "User has been set as a coach"}, status=200)
 
     def delete(self, request, *args, **kwargs):
         userId = kwargs['user_id']
@@ -47,6 +47,6 @@ class SetUserCoach(APIView):
             group, created = Group.objects.get_or_create(name='Coach')
             group.user_set.remove(user)
         except ObjectDoesNotExist:
-            return Response({"error": "User does not exist"}, status=404)
+            return Response({"detail": "User does not exist"}, status=404)
 
-        return Response({"success": "User has been removed as a coach"}, status=200)
+        return Response({'detail': 'User has been removed as a coach'}, status=200)

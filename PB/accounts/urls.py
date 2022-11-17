@@ -15,7 +15,7 @@ from accounts.Views.profilepicture import AddProfilePicture, \
 from accounts.Views.register import RegisterAccount
 from accounts.Views.usersubscriptiongenerator import AdminCreateUSubs
 from accounts.Views.viewaccount import ViewAccount
-from accounts.Views.viewaccountclasses import ViewAccountClasses
+from accounts.Views.viewenrolledclasses import ViewEnrolledClasses
 
 app_name = 'accounts'
 
@@ -26,7 +26,7 @@ urlpatterns = [
     path('logout/', Logout.as_view(), name='logout'),
     path('edit/', EditProfile.as_view(), name='edit'),
     path('icon/set/', AddProfilePicture.as_view(), name="addPicture"),
-    path('icon/<str:image_uuid>', ViewProfilePicture.as_view(), name='viewPicture'),
+    path('icon/<str:image_name>', ViewProfilePicture.as_view(), name='viewPicture'),
     path('icon/clear/', ClearProfilePicture.as_view(), name='clearPicture'),
     path('subscriptions/add/', AddSubscription.as_view(), name='addSubscription'),
     path('subscriptions/cancel/', CanceAllSubscriptions.as_view(), name='cancelSubscriptions'),
@@ -36,7 +36,7 @@ urlpatterns = [
     path('payment/add/', AddPaymentInformation.as_view(), name='addPaymentInfo'),
     path('payment/remove/', RemovePaymentInformation.as_view(), name='removePaymentInfo'),
     path('setcoach/<int:user_id>/', SetUserCoach.as_view(), name='setUserCoach'),
-    path('enrolledclasses/', ViewAccountClasses.as_view(), name='viewEnrolledClasses'),
+    path('enrolledclasses/', ViewEnrolledClasses.as_view(), name='viewEnrolledClasses'),
     # Below are the admin debug calls
     path('admin/generatesubscriptions/', AdminCreateUSubs.as_view(), name='adminCreateUSubs'),
     path('admin/renew/', AdminRenew.as_view(), name='adminRenew')

@@ -23,18 +23,12 @@ class RegisterAccount(APIView):
         rest_framework.parsers.FormParser,
         rest_framework.parsers.MultiPartParser
     ]
+    permission_classes = []
 
     def post(self, request: Request, format=None):
         errors = self.ValidateData(request.data)
         if len(errors):
-            return Response(errors)
-
-        # TODO: add avatar system
-        avatar = None
-        # if "avatar" in request.FILES:
-        #     file = request.FILES["avatar"]
-        #     trial_img = Image.open(file)
-        #     trial_img.verify()
+            return Response(errors, status=400)
         data = request.data
         user = User.objects.create_user(
             username=data['username'],
@@ -47,10 +41,9 @@ class RegisterAccount(APIView):
         userExt = UserExtension.objects.create(
             user=user,
             phone_num=data['phone_num'],
-            profile_pic=avatar
         )
         userExt.save()
-        return Response({"success": True})
+        return Response({"detail": 'account registered'}, status=200)
 
     keys = [
         'username',

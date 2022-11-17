@@ -75,7 +75,6 @@ class GetSubscription(RetrieveAPIView):
             return Response('Subscription successfully hidden')
 
 
-
 class CreateSubscription(CreateAPIView):
     parser_classes = [
         rest_framework.parsers.JSONParser,
@@ -91,7 +90,7 @@ class CreateSubscription(CreateAPIView):
         data = request.data
         errors = self.validateData(data)
         if len(errors):
-            return Response(errors)
+            return Response(errors, status=400)
         ndat = self.cleaned_data
         sub = Subscription.objects.create(
             name=ndat['name'],
@@ -211,7 +210,7 @@ class EditSubscription(APIView):
         data = request.data.dict()
         errors = self.validateData(data)
         if len(errors):
-            return Response(errors)
+            return Response(errors, status=400)
         ndat = self.cleaned_data
 
         for (k, v) in ndat.items():

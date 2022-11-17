@@ -31,7 +31,7 @@ class AddProfilePicture(APIView):
     def post(self, request: Request, ):
 
         if 'avatar' not in request.FILES:
-            return Response({'error', 'Image was not provided'}, status=400)
+            return Response({'detail': 'Image was not provided'}, status=400)
 
         f = request.FILES['avatar']
 
@@ -45,9 +45,9 @@ class AddProfilePicture(APIView):
             userExt.profile_pic = f
             userExt.save()
             fn = userExt.profile_pic.path.split(os.sep)[-1]
-            return Response({'fileName': fn}, status=200)
+            return Response({'detail': {'fileName': fn}}, status=200)
         else:
-            return Response({'error': "Submit a valid picture"}, status=200)
+            return Response({'detail': "Submit a valid picture"}, status=400)
 
 PROFILE_PICTURE_PATH = "accounts" + os.sep + "icon" + os.sep
 
@@ -60,7 +60,7 @@ class ViewProfilePicture(APIView):
 
     def get(self, request, *args, **kwargs):
 
-        fn = kwargs['image_uuid']
+        fn = kwargs['image_name']
         fp1 = os.path.join(PROFILE_PICTURE_PATH, fn)
 
         fp = os.path.join(settings.BASE_DIR, fp1)
@@ -69,7 +69,7 @@ class ViewProfilePicture(APIView):
             return FileResponse(f, status=200)
         except FileNotFoundError as e:
             print(e)
-            return Response({'error': "file does not exist"}, status=404)
+            return Response({'detail': "file does not exist"}, status=404)
 
 class ClearProfilePicture(APIView):
 
@@ -84,4 +84,4 @@ class ClearProfilePicture(APIView):
         if os.path.exists(fp):
             os.remove(fp)
 
-        return Response({'success': 'profile picture cleared'}, status=200)
+        return Response({'detail': 'profile picture cleared'}, status=200)
