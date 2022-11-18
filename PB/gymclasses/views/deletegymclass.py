@@ -29,7 +29,7 @@ class DeleteGymClass(APIView):
         rest_framework.parsers.MultiPartParser
     ]
 
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request: Request, *args, **kwargs):
 

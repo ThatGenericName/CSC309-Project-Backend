@@ -46,7 +46,7 @@ class CreateGymClass(APIView):
         rest_framework.parsers.MultiPartParser
     ]
 
-    # permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser]
 
     def post(self, request: Request, *args, **kwargs):
 

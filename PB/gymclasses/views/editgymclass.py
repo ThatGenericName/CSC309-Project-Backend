@@ -26,7 +26,7 @@ class EditGymClass(APIView):
         rest_framework.parsers.MultiPartParser
     ]
 
-    # permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser]
 
     keys = [
         'studio',

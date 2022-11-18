@@ -27,7 +27,7 @@ class ListAmenity(ListAPIView):
         rest_framework.parsers.MultiPartParser
     ]
 
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     pagination_class = ListAmenityPagination
     model = Amenity
     serializer_class = AmenitySerializer

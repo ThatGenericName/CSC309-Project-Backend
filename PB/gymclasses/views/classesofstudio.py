@@ -39,7 +39,7 @@ class ClassesofStudio(ListAPIView):
         rest_framework.parsers.MultiPartParser
     ]
 
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     pagination_class = ClassesofStudioPagination
     model = GymClassSchedule
     serializer_class = GymClassScheduleSerializer

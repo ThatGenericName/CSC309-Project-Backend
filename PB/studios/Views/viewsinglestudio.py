@@ -14,7 +14,7 @@ class ViewStudio(APIView):
     Views a specific account
     '''
 
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request: Request, format=None, *args, **kwargs):
 
