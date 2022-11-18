@@ -5,6 +5,7 @@ from .Views.createstudio import *
 from .Views.addamenity import *
 from .Views.deleteamentity import DeleteAmenity
 from .Views.deletestudio import DeleteStudio
+from .Views.editamenity import EditAmenity
 from .Views.editstudio import EditStudio
 from .Views.listamenity import *
 from .Views.studiogenerator import AdminGenerateStudios
@@ -23,6 +24,7 @@ urlpatterns = [
     path('<int:pk>/amenities/add/', AddAmenity.as_view(), name='AddAmenity'),
     path('<int:pk>/amenities/delete/', DeleteAmenity.as_view(), name='DeleteAmenity'),
     path('<int:pk>/amenities/', ListAmenity.as_view(), name='ListAmenity'),
+    path('<int:pk>/amenities/edit', EditAmenity.as_view(), name='EditAmenity'),
     path('', ViewStudios.as_view(), name='viewStudios'),
     path('admingenerate/', AdminGenerateStudios.as_view(), name='generateStudios')
 ]
