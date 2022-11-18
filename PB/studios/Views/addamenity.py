@@ -1,5 +1,5 @@
 import rest_framework.parsers
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -25,7 +25,7 @@ class AddAmenity(APIView):
         'quantity'
     ]
 
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def post(self, request: Request, *args, **kwargs):
 
