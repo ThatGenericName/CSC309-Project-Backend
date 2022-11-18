@@ -68,8 +68,8 @@ class CreateGymClass(APIView):
         except ObjectDoesNotExist:
             return Response({'error': 'Coach was not found'}, status=404)
 
-        # if not coach.groups.filter(name='Coach').exists():
-        #     return Response({'error': 'Coach was not found'}, status=404)
+        if not coach.groups.filter(name='Coach').exists():
+            return Response({'error': 'Coach was not found'}, status=404)
 
         start_time = dt.datetime.strptime(data['start_time'], '%H:%M').time()
         end_time = dt.datetime.strptime(data['end_time'], '%H:%M').time()
