@@ -26,7 +26,7 @@ class ViewAccount(APIView):
             s[k] = v
 
         try:
-            upd = UserPaymentData.objects.get(user=user)
+            upd = UserPaymentData.objects.get(user=user, active=True)
             upddat = UserPaymentDataSerializer(upd).data
         except ObjectDoesNotExist:
             upddat = None

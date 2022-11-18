@@ -56,6 +56,7 @@ class StudioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Studio
         fields = [
+            'id',
             'name',
             'address',
             'post_code',

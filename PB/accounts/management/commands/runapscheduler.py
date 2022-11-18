@@ -15,7 +15,8 @@ from django_apscheduler import util
 from django.contrib.auth.models import User
 from django.utils import timezone
 from PB.utility import VerifyPayment
-from accounts.models import InternalUserPaymentDataSerializer, \
+from accounts.Views.accountsubscription import ResetActiveSubscription
+from accounts.models import GetUserExtension, InternalUserPaymentDataSerializer, \
     UserExtension, \
     UserPaymentData, UserSubscription
 from studios.models import StudioSearchHash
@@ -40,7 +41,7 @@ def CheckForSubscriptionRenewals():
     users = User.objects.all()
     for user in users:
         print(f'checking {user.username}')
-        uext = user.userextension
+        uext = GetUserExtension(user)
         activeSub = uext.active_subscription
         if activeSub is not None and activeSub.end_time < range:
             print(f'{user.username} has an active subscription')
@@ -87,6 +88,7 @@ def CheckForSubscriptionRenewals():
                     }
                     a = UserSubscription.objects.create(**dat1)
                     a.save()
+        ResetActiveSubscription(user)
 
 @util.close_old_connections
 def AutoCreateCoachGroup():

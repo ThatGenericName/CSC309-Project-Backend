@@ -18,4 +18,4 @@ class Logout(APIView):
             request.user.auth_token.delete()
         except ObjectDoesNotExist:
             pass
-        return Response(status=200)
+        return Response({'detail': 'account token deleted'}, status=200)

@@ -83,9 +83,7 @@ class AddSubscription(APIView):
         except ObjectDoesNotExist:
             return Response("Subscription does not exist", status=404)
 
-
         # get payment data
-
         try:
             userPaymentDetail = UserPaymentData.objects.get(user=request.user, active=True)
             dat = InternalUserPaymentDataSerializer(userPaymentDetail).data
@@ -94,7 +92,7 @@ class AddSubscription(APIView):
             if not res:
                 raise ObjectDoesNotExist() # im too lazy to set this up properly
         except ObjectDoesNotExist:
-            return Response("Your payment information is invalid, please check your payment information on your profile", status=200)
+            return Response({'detail': "Your payment information is invalid, please check your payment information on your profile"}, status=401)
 
         uext = UserExtension.objects.get(user=request.user)
 
@@ -162,7 +160,7 @@ class AddSubscription(APIView):
                     uSub = UserSubscription.objects.create(**dat)
                     uSub.save()
 
-        return Response({'Thank you for your purchase'}, status=200)
+        return Response({'detail': 'Thank you for your purchase'}, status=200)
 
 def RemoveAndShiftUnpaidSubs(user, start_date) -> (datetime, int):
     '''
@@ -222,8 +220,20 @@ def RemoveAndShiftUserSubs(user, start_date) -> (datetime, int):
         sub.end_time = nextDate
         sub.save()
 
+    ResetActiveSubscription(user)
     return nextDate, len(subsList)
 
+def ResetActiveSubscription(user: User):
+    now = timezone.now()
+    uext = GetUserExtension(user)
+    userSubs = UserSubscription.objects\
+        .filter(user=user, start_time__lte=now)\
+        .order_by('-start_time')
+
+    active = userSubs.first()
+    if active is not None:
+        uext.active_subscription = active
+        uext.save()
 
 class CanceAllSubscriptions(APIView):
 
@@ -248,7 +258,7 @@ class CanceAllSubscriptions(APIView):
                 pass
             sub.delete()
 
-        return Response(status=200)
+        return Response({'details': 'future subscriptions successfully cancelled'}, status=200)
 
 
 class GetSubscription(APIView):
@@ -289,12 +299,17 @@ class GetSubscription(APIView):
             return Response('User Subscription does not exist', status=404)
         if sub.user.pk != request.user.pk:
             return Response('User Subscription does not exist', status=404)
+
+        now = timezone.now()
+        if sub.start_time < now:
+            return Response({'detail': 'User Subscription has already begun'}, status=401)
+
         sd = sub.start_time
         sub.delete()
 
         RemoveAndShiftUserSubs(sub.user, sd)
 
-        return Response(status=200)
+        return Response({'detail': 'Subscription successfully cancelled'},status=200)
 
 
 class UserSubscriptionPagination(PageNumberPagination):

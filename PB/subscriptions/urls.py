@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 from subscriptions.views.subscriptiontests import AdminClearTgen, AdminCreate
-from subscriptions.views.viewsubscriptions import CreateSubscription, \
+from subscriptions.views.subscriptionviews import CreateSubscription, \
     EditSubscription, GetSubscription, \
     ViewSubscriptions
 

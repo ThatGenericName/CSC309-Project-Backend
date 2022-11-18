@@ -5,6 +5,7 @@ from uuid import uuid4
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.auth.models import Group, User
+from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.permissions import BasePermission
 
@@ -97,13 +98,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserExtendedSerializer(serializers.ModelSerializer):
     user = UserSerializer()
-    enrolled_classes = GymClassScheduleSerializer()
 
     class Meta:
         model = UserExtension
         fields = [
             'phone_num',
-            'enrolled_classes',
             'active_subscription',
             'profile_pic',
             'last_modified',
@@ -113,6 +112,18 @@ class UserExtendedSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        qs = instance.enrolled_classes.all()
+        now = timezone.now()
+        a = qs.filter(start_time__gte=now).order_by('start_time')
+        maxCount = 10
+        dat = []
+        for i, gcs in enumerate(a):
+            if i > maxCount:
+                break
+            datS = GymClassScheduleSerializer(gcs).data
+            dat.append(datS)
+
+        data['enrolled_classes'] = dat
 
         return data
 
@@ -160,6 +171,7 @@ class UserSubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserSubscription
         fields = [
+            'id',
             'user',
             'subscription',
             'payment_time',

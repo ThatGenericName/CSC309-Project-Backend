@@ -43,7 +43,7 @@ class EditProfile(APIView):
         errors = self.ValidateData(request.data.dict())
 
         if len(errors):
-            return Response(errors, status=200)
+            return Response(errors, status=400)
 
         user = request.user
         userExt = UserExtension.objects.get(user=user)
@@ -65,7 +65,7 @@ class EditProfile(APIView):
         user.save()
         userExt.save()
 
-        return Response(status=200)
+        return Response({'detail': 'account successfully modified'}, status=200)
 
     cleanedData = {}
 
