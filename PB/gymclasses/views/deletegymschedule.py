@@ -34,7 +34,7 @@ class DeleteGymSchedule(APIView):
 
     permission_classes = [IsAuthenticated]
 
-    def post(self, request: Request, *args, **kwargs):
+    def delete(self, request: Request, *args, **kwargs):
 
         identity = kwargs['gym_schedule']
         data = request.data

@@ -32,7 +32,7 @@ class CreateStudio(APIView):
         errors = self.ValidateData(request.data)
 
         if len(errors):
-            return Response(errors)
+            return Response(errors, status=400)
 
         data = request.data
 
@@ -55,7 +55,7 @@ class CreateStudio(APIView):
                                                 studio=Studio.objects.get(name=data['name']))
                 image.save()
 
-        return Response({"success": True})
+        return Response({"success": True}, status=200)
 
     def ValidateData(self, data) -> dict:
         errors = {}

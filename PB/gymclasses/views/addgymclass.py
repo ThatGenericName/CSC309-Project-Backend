@@ -56,7 +56,7 @@ class CreateGymClass(APIView):
         errors = self.ValidateData(request.data)
 
         if len(errors):
-            return Response(errors)
+            return Response(errors, status=400)
 
         try:
             studio = Studio.objects.get(id=studioId)
@@ -88,7 +88,7 @@ class CreateGymClass(APIView):
                 break
 
         if not any_classes:
-            return Response({"No Classes given in start and end date"}, status=200)
+            return Response({"No Classes given in start and end date"}, status=400)
 
         keywords = data.getlist('keywords')
 
@@ -130,7 +130,7 @@ class CreateGymClass(APIView):
                                                               end_time=e)
                 gymschedule.save()
 
-        return Response({"success": True})
+        return Response({"success": True}, status=200)
 
     def ValidateData(self, data) -> dict:
         errors = {}

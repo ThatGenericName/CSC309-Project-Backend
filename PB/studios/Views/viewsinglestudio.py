@@ -21,7 +21,7 @@ class ViewStudio(APIView):
         try:
             Studio.objects.get(id=kwargs["studio_id"])
         except ObjectDoesNotExist:
-            Response({"Studio Does not exist"})
+            Response({"Studio Does not exist"}, status=404)
 
         studio = Studio.objects.get(id=kwargs["studio_id"])
         lat, long = studio.geo_loc.split(",")

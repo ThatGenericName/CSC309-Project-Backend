@@ -52,7 +52,7 @@ class ClassesofStudio(ListAPIView):
             return Response({'error': 'Studio Class was not found'}, status=404)
 
         if not len(GymClassSchedule.objects.filter(parent_class__studio=studio)):
-            return Response({'No Classes  found'})
+            return Response({'No Classes  found'}, status=404)
 
         return super().get(request, *args, **kwargs)
 

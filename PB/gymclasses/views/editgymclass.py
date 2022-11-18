@@ -48,13 +48,13 @@ class EditGymClass(APIView):
         errors = self.ValidateData(request.data)
 
         if len(errors):
-            return Response(errors)
+            return Response(errors, status=400)
 
         if not GymClass.objects.filter(id=gym_class_id):
-            return Response({"Wrong GymClass Id"})
+            return Response({"Wrong GymClass Id"}, status=404)
 
         if data["studio"] and not Studio.objects.filter(id=data["studio"]):
-            return Response({"Wrong Studio Id"})
+            return Response({"Wrong Studio Id"}, status=404)
 
         gym_class = GymClass.objects.get(id=gym_class_id)
 

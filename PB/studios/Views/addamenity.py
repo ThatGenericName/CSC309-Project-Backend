@@ -31,21 +31,20 @@ class AddAmenity(APIView):
 
         pk = kwargs['pk']
         if not Studio.objects.filter(id=pk):
-            return Response({"Wrong Studio Id"})
+            return Response({"Wrong Studio Id"}, status=404)
 
         errors = self.ValidateData(request.data)
 
         if len(errors):
-            return Response(errors)
+            return Response(errors, status=400)
         data = request.data
-
 
         amenity = Amenity.objects.create(studio=Studio.objects.get(pk=pk), type=data['type'],
                                          quantity=data['quantity'])
 
         amenity.save()
 
-        return Response({"success": True})
+        return Response({"success": True}, status=200)
 
     def ValidateData(self, data) -> dict:
         errors = {}

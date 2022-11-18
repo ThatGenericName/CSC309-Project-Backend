@@ -41,7 +41,7 @@ class ViewGymClassSchedule(ListAPIView):
     def get(self, request, *args, **kwargs):
         e = self.ProcessParams(request.query_params)
         if e:
-            return Response(e)
+            return Response(e, status=400)
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):

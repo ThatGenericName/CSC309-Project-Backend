@@ -47,10 +47,10 @@ class EditGymClassSchedule(APIView):
         errors = self.ValidateData(request.data)
 
         if len(errors):
-            return Response(errors)
+            return Response(errors, status=400)
 
         if not GymClassSchedule.objects.filter(id=gym_class_schedule_id):
-            return Response({"Wrong GymClass Id"})
+            return Response({"Wrong GymClass Id"}, status=404)
 
         if data["coach"]:
             try:

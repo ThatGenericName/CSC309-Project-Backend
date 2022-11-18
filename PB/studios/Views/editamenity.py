@@ -30,12 +30,12 @@ class EditAmenity(APIView):
     def post(self, request: Request, *args, **kwargs):
 
         if not Amenity.objects.filter(pk=kwargs['pk']):
-            return Response({"Amenity Does not Exist"})
+            return Response({"Amenity Does not Exist"}, status=404)
 
         errors = self.ValidateData(request.data)
 
         if len(errors):
-            return Response(errors)
+            return Response(errors, status=400)
 
         amenity = Amenity.objects.get(pk=kwargs['pk'])
 
@@ -45,7 +45,7 @@ class EditAmenity(APIView):
         amenity.studio = amenity.studio
 
         amenity.save()
-        return Response({"success": True})
+        return Response({"success": True}, status=200)
 
     def ValidateData(self, data) -> dict:
         """

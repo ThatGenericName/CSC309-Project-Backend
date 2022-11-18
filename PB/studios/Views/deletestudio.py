@@ -19,12 +19,12 @@ class DeleteStudio(APIView):
 
     permission_classes = [IsAdminUser]
 
-    def post(self, request: Request, *args, **kwargs):
+    def delete(self, request: Request, *args, **kwargs):
 
         pk = kwargs['pk']
 
         if not Studio.objects.filter(id=pk):
-            return Response({"Wrong Studio Id"})
+            return Response({"Wrong Studio Id"}, status=404)
 
         if ImageRep.objects.filter(studio_id=pk):
             for item in ImageRep.objects.filter(studio_id=pk):

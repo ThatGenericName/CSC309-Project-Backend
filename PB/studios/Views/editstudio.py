@@ -34,11 +34,11 @@ class EditStudio(APIView):
         pk = kwargs['pk']
 
         if not Studio.objects.filter(id=pk):
-            return Response({"Wrong Studio Id"})
+            return Response({"Wrong Studio Id"}, status=404)
         errors = self.ValidateData(request.data)
 
         if len(errors):
-            return Response(errors)
+            return Response(errors, status=400)
 
         data = request.data
         studio = Studio.objects.get(id=pk)

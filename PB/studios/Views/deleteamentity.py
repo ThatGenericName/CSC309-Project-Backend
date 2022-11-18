@@ -27,7 +27,7 @@ class DeleteAmenity(APIView):
 
     permission_classes = [IsAdminUser]
 
-    def post(self, request: Request, *args, **kwargs):
+    def delete(self, request: Request, *args, **kwargs):
 
         if not Amenity.objects.filter(pk=kwargs['pk']):
             return Response({"Amenity Does not Exist"})
