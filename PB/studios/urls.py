@@ -4,6 +4,7 @@ from django.urls import include, path
 from .Views.createstudio import *
 from .Views.addamenity import *
 from .Views.deleteamentity import DeleteAmenity
+from .Views.deletestudio import DeleteStudio
 from .Views.editstudio import EditStudio
 from .Views.listamenity import *
 from .Views.studiogenerator import AdminGenerateStudios
@@ -15,12 +16,13 @@ app_name = 'studios'
 
 urlpatterns = [
     path('create/', CreateStudio.as_view(), name='CreateStudio'),
+    path('<int:pk>/edit/', EditStudio.as_view(), name='editStudio'),
+    path('<int:studio_id>/', ViewStudio.as_view(), name='ViewStudio'),
+    path('<int:pk>/delete/', DeleteStudio.as_view(), name='DeleteStudio'),
     path('studioimages/<str:image>', ImageView.as_view(), name='ImageView'),
     path('<int:pk>/amenities/add/', AddAmenity.as_view(), name='AddAmenity'),
     path('<int:pk>/amenities/delete/', DeleteAmenity.as_view(), name='DeleteAmenity'),
     path('<int:pk>/amenities/', ListAmenity.as_view(), name='ListAmenity'),
     path('', ViewStudios.as_view(), name='viewStudios'),
-    path('<int:studio_id>/', ViewStudio.as_view(), name='ViewStudio'),
-    path('admingenerate/', AdminGenerateStudios.as_view(), name='generateStudios'),
-    path('<int:pk>/edit/', EditStudio.as_view(), name='editStudio')
+    path('admingenerate/', AdminGenerateStudios.as_view(), name='generateStudios')
 ]
