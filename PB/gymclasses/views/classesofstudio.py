@@ -11,6 +11,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import rest_framework.parsers
+from datetime import datetime
+from pytz import timezone
 
 from PB.utility import ValidateInt, ValidatePhoneNumber
 from accounts.models import UserExtension, User
@@ -42,14 +44,23 @@ class ClassesofStudio(ListAPIView):
     model = GymClassSchedule
     serializer_class = GymClassScheduleSerializer
 
-    def get_queryset(self):
-
-        studio_id = self.kwargs['studio_id']
-
+    def get(self, request, *args, **kwargs):
+        studio_id = kwargs['studio_id']
         try:
             studio = Studio.objects.get(id=studio_id)
         except ObjectDoesNotExist:
             return Response({'error': 'Studio Class was not found'}, status=404)
+
+        if not len(GymClassSchedule.objects.filter(parent_class__studio=studio)):
+            return Response({'No Classes  found'})
+
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+
+        studio_id = self.kwargs['studio_id']
+
+        studio = Studio.objects.get(id=studio_id)
 
         classes = GymClassSchedule.objects.filter(parent_class__studio=studio)
 

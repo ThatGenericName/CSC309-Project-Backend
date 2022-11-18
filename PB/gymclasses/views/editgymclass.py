@@ -64,16 +64,15 @@ class EditGymClass(APIView):
 
         if data["earliest_date"]:
             earliest_date = datetime.datetime.strptime(data['earliest_date'], '%d/%m/%Y')
-            tz = pytz.timezone('America/Toronto')
-            earliest_date = earliest_date.replace(tzinfo=tz)
+            earliest_date = earliest_date.replace(tzinfo=pytz.UTC)
         if data["last_date"]:
             last_date = datetime.datetime.strptime(data['last_date'], '%d/%m/%Y')
-            tz = pytz.timezone('America/Toronto')
-            last_date = last_date.replace(tzinfo=tz)
+            last_date = last_date.replace(tzinfo=pytz.UTC)
         if data["start_time"]:
             start_time = datetime.datetime.strptime(data['start_time'], '%H:%M').time()
         if data["end_time"]:
             end_time = datetime.datetime.strptime(data['end_time'], '%H:%M').time()
+
         if data["day"]:
             day = data["day"]
 
@@ -113,11 +112,22 @@ class EditGymClass(APIView):
             if d.strftime("%A") == day:
                 s = datetime.datetime(year=d.year, month=d.month, day=d.day,
                                       hour=start_time.hour, minute=start_time.minute)
-                # tz = pytz.timezone('America/Toronto')
-                # s = s.replace(tzinfo=tz)
+                s = s.replace(tzinfo=pytz.UTC)
+                s = s.replace(year=d.year)
+                s = s.replace(month=d.month)
+                s = s.replace(day=d.day)
+                s = s.replace(minute=start_time.minute)
+                s = s.replace(hour=start_time.hour)
+
                 e = datetime.datetime(year=d.year, month=d.month, day=d.day,
                                       hour=end_time.hour, minute=end_time.minute)
-                # e = e.replace(tzinfo=tz)
+
+                e = e.replace(tzinfo=pytz.UTC)
+                e = e.replace(year=d.year)
+                e = e.replace(month=d.month)
+                e = e.replace(day=d.day)
+                e = e.replace(minute=end_time.minute)
+                e = e.replace(hour=end_time.hour)
                 gymschedule = GymClassSchedule.objects.create(date=d,
                                                               coach=User.objects.get(id=1),
                                                               parent_class=gym_class,

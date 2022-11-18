@@ -69,9 +69,8 @@ class EditGymClassSchedule(APIView):
         is_cancelled = gym_class_schedule.is_cancelled
 
         if data["date"]:
-            date = datetime.datetime.strptime(data['date'], '%d/%m/%Y').date()
-            tz = pytz.timezone('America/Toronto')
-            # date = date.replace(tzinfo=tz)
+            d = datetime.datetime.strptime(data['date'], '%d/%m/%Y')
+            date = d.replace(tzinfo=pytz.UTC)
         if data["coach"]:
             coach = User.objects.get(id=data["coach"])
         if data["enrollment_capacity"]:
@@ -88,15 +87,27 @@ class EditGymClassSchedule(APIView):
             if start_time >= end_time:
                 return Response({"Last date must be later than the Start date"})
 
-        if gym_class_schedule.parent_class.earliest_date > date or \
-                gym_class_schedule.parent_class.last_date < date:
+        if gym_class_schedule.parent_class.earliest_date.year > date.year or \
+                gym_class_schedule.parent_class.earliest_date.month > date.month or \
+                gym_class_schedule.parent_class.earliest_date.day > date.day or \
+                gym_class_schedule.parent_class.last_date.year < date.year or \
+                gym_class_schedule.parent_class.last_date.month < date.month or \
+                gym_class_schedule.parent_class.last_date.day < date.day:
             return Response({"Date not between class earliest date and last date"})
 
-        s = datetime.datetime(year=date.year, month=date.month, day=date.day,
-                              hour=start_time.hour, minute=start_time.minute)
+        s = gym_class_schedule.start_time
+        s = s.replace(year=date.year)
+        s = s.replace(month=date.month)
+        s = s.replace(day=date.day)
+        s = s.replace(minute=start_time.minute)
+        s = s.replace(hour=start_time.hour)
 
-        e = datetime.datetime(year=date.year, month=date.month, day=date.day,
-                              hour=end_time.hour, minute=end_time.minute)
+        e = gym_class_schedule.end_time
+        e = e.replace(year=date.year)
+        e = e.replace(month=date.month)
+        e = e.replace(day=date.day)
+        e = e.replace(minute=end_time.minute)
+        e = e.replace(hour=end_time.hour)
 
         setattr(gym_class_schedule, "date", date)
         setattr(gym_class_schedule, "coach", coach)

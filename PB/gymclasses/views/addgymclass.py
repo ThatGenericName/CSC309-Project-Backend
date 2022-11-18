@@ -75,11 +75,10 @@ class CreateGymClass(APIView):
         end_time = dt.datetime.strptime(data['end_time'], '%H:%M').time()
 
         start_date = datetime.strptime(data['earliest_date'], '%d/%m/%Y')
-        tz = pytz.timezone('America/Toronto')
-        start_date = start_date.replace(tzinfo=tz)
+        start_date = start_date.replace(tzinfo=pytz.UTC)
 
         end_date = datetime.strptime(data['last_date'], '%d/%m/%Y')
-        end_date = end_date.replace(tzinfo=tz)
+        end_date = end_date.replace(tzinfo=pytz.UTC)
 
         any_classes = False
 
@@ -117,8 +116,10 @@ class CreateGymClass(APIView):
             if d.strftime("%A") == data['day']:
                 s = datetime(year=d.year, month=d.month, day=d.day,
                              hour=start_time.hour, minute=start_time.minute)
+                s = s.replace(tzinfo=pytz.UTC)
                 e = datetime(year=d.year, month=d.month, day=d.day,
                              hour=end_time.hour, minute=end_time.minute)
+                e = e.replace(tzinfo=pytz.UTC)
 
                 gymschedule = GymClassSchedule.objects.create(date=d,
                                                               parent_class=gymclass,
