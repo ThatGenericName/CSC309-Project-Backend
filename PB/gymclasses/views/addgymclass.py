@@ -20,8 +20,10 @@ from studios.models import Studio
 
 # Create your views here.
 
+
 KEYS = [
     'name',
+    'coach',
     'description',
     'keywords',
     'earliest_date',
@@ -51,23 +53,23 @@ class CreateGymClass(APIView):
         studioId = kwargs['studio_id']
         data = request.data
 
+        errors = self.ValidateData(request.data)
+
+        if len(errors):
+            return Response(errors)
+
         try:
             studio = Studio.objects.get(id=studioId)
         except ObjectDoesNotExist:
             return Response({'error': 'Studio was not found'}, status=404)
 
         try:
-            coach = User.objects.get(id=1)
+            coach = User.objects.get(id=data["coach"])
         except ObjectDoesNotExist:
             return Response({'error': 'Coach was not found'}, status=404)
 
         # if not coach.groups.filter(name='Coach').exists():
         #     return Response({'error': 'Coach was not found'}, status=404)
-
-        errors = self.ValidateData(request.data)
-
-        if len(errors):
-            return Response(errors)
 
         start_time = dt.datetime.strptime(data['start_time'], '%H:%M').time()
         end_time = dt.datetime.strptime(data['end_time'], '%H:%M').time()
@@ -155,7 +157,9 @@ class CreateGymClass(APIView):
 
         if 'earliest_date' not in errors:
             start = datetime.strptime(data['earliest_date'], '%d/%m/%Y')
-            present = datetime.now()
+            tz = pytz.timezone('America/Toronto')
+            start = start.replace(tzinfo=tz)
+            present = timezone.now()
             if start <= present:
                 errors['earliest_date'] = "Earliest date must be later than the current date"
 

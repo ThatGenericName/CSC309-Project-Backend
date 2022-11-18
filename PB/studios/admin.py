@@ -8,6 +8,7 @@ from studios.models import Amenity, Studio, StudioSearchHash, StudioSearchTemp
 
 @admin.register(Studio)
 class StudioAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'name', 'address', 'post_code', 'phone_num')
     pass
 
 @admin.register(Amenity)

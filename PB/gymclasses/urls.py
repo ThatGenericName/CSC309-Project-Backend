@@ -9,6 +9,8 @@ from .views.addgymclass import CreateGymClass
 from .views.deletegymschedule import DeleteGymSchedule
 from .views.deletegymclass import DeleteGymClass
 from .views.classesofstudio import ClassesofStudio
+from .views.editgymclass import EditGymClass
+from .views.editgymschedule import EditGymClassSchedule
 from .views.searchgymclassschedules import ViewGymClassSchedule
 
 app_name = 'gymclasses'
@@ -20,6 +22,8 @@ urlpatterns = [
     path('<int:class_id>/drop/', RemoveGymClassFromUser.as_view(), name='dropGymClass'),
     path('dropclasses/', DropAllClasses.as_view(), name='dropAllClasses'),
     path('<int:studio_id>/create/', CreateGymClass.as_view(), name='CreateGymClass'),
+    path('<int:gymclass_id>/edit/', EditGymClass.as_view(), name='EditGymClass'),
+    path('schedule/<int:gymclass_schedule_id>/edit/', EditGymClassSchedule.as_view(), name='EditGymClassSchedule'),
     path('schedule/<int:gym_schedule>/delete/', DeleteGymSchedule.as_view(),
          name='DeleteGymSchedule'),
     path('<int:gym_class>/delete/', DeleteGymClass.as_view(), name='DeleteGymClass'),

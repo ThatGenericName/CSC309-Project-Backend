@@ -11,7 +11,7 @@ class Studio(models.Model):
     name = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
     post_code = models.CharField(max_length=255)  # doesn't this fall under address?
-    geo_loc = models.CharField(max_length=255)
+    geo_loc = models.CharField(max_length=255, blank=True)
     phone_num = models.CharField(max_length=20)
     last_modified = models.DateTimeField(auto_now=True)
     tgen = models.BooleanField(null=False, default=False)
