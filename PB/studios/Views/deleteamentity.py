@@ -10,7 +10,7 @@ from PB.utility import *
 from ..models import *
 
 
-class EditAmenity(APIView):
+class DeleteAmenity(APIView):
     '''
     edits amenity in db
     '''
@@ -32,35 +32,7 @@ class EditAmenity(APIView):
         if not Amenity.objects.filter(pk=kwargs['pk']):
             return Response({"Amenity Does not Exist"})
 
-        errors = self.ValidateData(request.data)
-
-        if len(errors):
-            return Response(errors)
-
         amenity = Amenity.objects.get(pk=kwargs['pk'])
 
-        data = request.data
-        amenity.quantity = data['quantity']
-        amenity.type = data['type']
-        amenity.studio = amenity.studio
-
-        amenity.save()
+        amenity.delete()
         return Response({"success": True})
-
-    def ValidateData(self, data) -> dict:
-        """
-        Function to validate the input data
-
-        """
-        errors = {}
-        for key in self.keys:
-            if key not in data:
-                errors[key] = "Missing Key"
-            elif not data[key]:
-                errors[key] = "This Field is required"
-
-        if "quantity" not in errors:
-            if type(data["quantity"]) != int:
-                errors["quantity"] = "Quantity should be an integer"
-
-        return errors

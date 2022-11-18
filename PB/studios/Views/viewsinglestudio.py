@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 
 from ..models import *
 
+
 # Create your views here.
 
 class ViewStudio(APIView):
@@ -28,8 +29,4 @@ class ViewStudio(APIView):
         s = StudioSerializer(studio).data
         s["direction"] = "https://maps.google.com/?q=" + lat + "," + long
 
-
-
-
         return Response(s)
-

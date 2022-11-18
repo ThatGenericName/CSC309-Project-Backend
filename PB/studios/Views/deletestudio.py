@@ -6,7 +6,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ..models import Studio, ImageRep
+from ..models import Amenity, Studio, ImageRep
 
 
 
@@ -34,6 +34,8 @@ class DeleteStudio(APIView):
                     if os.path.exists(path):
                         os.remove(path)
             ImageRep.objects.filter(studio_id=pk).delete()
+
+        Amenity.objects.filter(studio_id=pk).delete()
 
         Studio.objects.get(id=pk).delete()
 
