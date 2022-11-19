@@ -122,13 +122,11 @@ class CreateGymClass(APIView):
                 s = datetime(year=d.year, month=d.month, day=d.day,
                              hour=start_time.hour, minute=start_time.minute)
                 tz = pytz.timezone("America/Toronto")
-                s = s.replace(tzinfo=tz)
-                #s = s.astimezone(pytz.timezone('utc'))
+                s = tz.localize(s)
 
                 e = datetime(year=d.year, month=d.month, day=d.day,
                              hour=end_time.hour, minute=end_time.minute)
-                e = e.replace(tzinfo=tz)
-                #e = e.astimezone(pytz.timezone('utc'))
+                e = tz.localize(e)
 
                 gymschedule = GymClassSchedule.objects.create(date=datetime(year=d.year,
                                                                             month=d.month,

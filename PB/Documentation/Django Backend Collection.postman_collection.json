@@ -218,7 +218,7 @@
 			"name": "Account General",
 			"item": [
 				{
-					"name": "View Account",
+					"name": "View Profile",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -354,7 +354,7 @@
 					"response": []
 				},
 				{
-					"name": "View Profile Picture",
+					"name": "Get Profile Picture",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -378,7 +378,7 @@
 					"response": []
 				},
 				{
-					"name": "Clear Profile Picture",
+					"name": "Remove Profile Picture",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -470,41 +470,6 @@
 					"response": []
 				},
 				{
-					"name": "Remove Payment Method",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Token {{User Token}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"url": {
-							"raw": "http://127.0.0.1:8000/accounts/payment/remove/",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "8000",
-							"path": [
-								"accounts",
-								"payment",
-								"remove",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Add Subscription",
 					"request": {
 						"method": "POST",
@@ -551,7 +516,7 @@
 					"response": []
 				},
 				{
-					"name": "View User Subscription",
+					"name": "Get User Subscription",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -589,7 +554,7 @@
 					"response": []
 				},
 				{
-					"name": "Get All User Subscriptions",
+					"name": "Get User Subscriptions",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -678,7 +643,7 @@
 					"response": []
 				},
 				{
-					"name": "Cancel All Subscription",
+					"name": "Cancel All Subscriptions",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -789,33 +754,7 @@
 						],
 						"body": {
 							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "card_type",
-									"value": "credit",
-									"type": "text"
-								},
-								{
-									"key": "card_num",
-									"value": "1111222233334444",
-									"type": "text"
-								},
-								{
-									"key": "card_name",
-									"value": "bteven stills",
-									"type": "text"
-								},
-								{
-									"key": "exp_month",
-									"value": "01",
-									"type": "text"
-								},
-								{
-									"key": "exp_year",
-									"value": "2025",
-									"type": "text"
-								}
-							]
+							"formdata": []
 						},
 						"url": {
 							"raw": "http://127.0.0.1:8000/accounts/payment/remove/",
@@ -877,21 +816,58 @@
 			]
 		},
 		{
-			"name": "Gym Class",
+			"name": "Studio",
 			"item": [
 				{
-					"name": "Enroll In Class Session",
+					"name": "Create Studio",
 					"request": {
-						"method": "GET",
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{User Token}}",
-								"type": "text"
+								"value": "Token {{Admin Token}}",
+								"type": "text",
+								"disabled": true
 							}
 						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "test2",
+									"type": "text"
+								},
+								{
+									"key": "address",
+									"value": "340 Bloor Street W",
+									"type": "text"
+								},
+								{
+									"key": "post_code",
+									"value": "M5S1W4",
+									"type": "text"
+								},
+								{
+									"key": "phone_num",
+									"value": "4373351499",
+									"type": "text"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": [
+										"/Users/raghavbanka/Downloads/Unknown.jpeg",
+										"/Users/raghavbanka/Downloads/photo-1579353977828-2a4eab540b9a.jpeg"
+									]
+								}
+							]
+						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/classes/session/5/signup/",
+							"raw": "http://127.0.0.1:8000/studios/create/",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -901,10 +877,8 @@
 							],
 							"port": "8000",
 							"path": [
-								"classes",
-								"session",
-								"5",
-								"signup",
+								"studios",
+								"create",
 								""
 							]
 						}
@@ -912,18 +886,18 @@
 					"response": []
 				},
 				{
-					"name": "Drop Class Session",
+					"name": "Delete Studio",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{User Token}}",
+								"value": "Token {{Admin Token}}",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "http://127.0.0.1:8000/classes/session/5/drop/",
+							"raw": "http://127.0.0.1:8000/studios/31/delete/",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -933,10 +907,9 @@
 							],
 							"port": "8000",
 							"path": [
-								"classes",
-								"session",
-								"5",
-								"drop",
+								"studios",
+								"31",
+								"delete",
 								""
 							]
 						}
@@ -944,18 +917,48 @@
 					"response": []
 				},
 				{
-					"name": "Enroll In Class",
+					"name": "Edit Studio",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{User Token}}",
+								"value": "Token {{Admin Token}}",
 								"type": "text"
 							}
 						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "TestName2",
+									"type": "text"
+								},
+								{
+									"key": "address",
+									"value": "320 Bloor Street W",
+									"type": "text"
+								},
+								{
+									"key": "post_code",
+									"value": "M1A2B3",
+									"type": "text"
+								},
+								{
+									"key": "phone_num",
+									"value": "1234567890",
+									"type": "text"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": "/D:/Downloads/PNG_transparency_demonstration_1.png"
+								}
+							]
+						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/classes/2/signup/",
+							"raw": "http://127.0.0.1:8000/studios/1/edit/",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -965,9 +968,221 @@
 							],
 							"port": "8000",
 							"path": [
-								"classes",
+								"studios",
+								"1",
+								"edit",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Studio",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/studios/4/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"4",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Studios",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "location",
+									"value": "43.66970918615602,-79.41040227000227",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/studios/?chn=Steven",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								""
+							],
+							"query": [
+								{
+									"key": "n",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "a",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "cln",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "chn",
+									"value": "Steven"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Amenity",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{Admin Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "type",
+									"value": "latte",
+									"type": "text"
+								},
+								{
+									"key": "quantity",
+									"value": "20",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/studios/1/amenities/add/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"1",
+								"amenities",
+								"add",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Amenity",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{Admin Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "type",
+									"value": "tea",
+									"type": "text"
+								},
+								{
+									"key": "quantity",
+									"value": "15",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/studios/amenities/7/edit/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"amenities",
+								"7",
+								"edit",
+								""
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "tea",
+									"disabled": true
+								},
+								{
+									"key": "quantity",
+									"value": "3",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Amenities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/studios/2/amenities/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
 								"2",
-								"signup",
+								"amenities",
 								""
 							]
 						}
@@ -975,18 +1190,12 @@
 					"response": []
 				},
 				{
-					"name": "Drop Class",
+					"name": "Image View",
 					"request": {
 						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Token {{User Token}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:8000/classes/2/drop/",
+							"raw": "http://127.0.0.1:8000/studios/studioimages/{{studio picture}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -996,45 +1205,19 @@
 							],
 							"port": "8000",
 							"path": [
-								"classes",
-								"2",
-								"drop",
-								""
+								"studios",
+								"studioimages",
+								"{{studio picture}}"
 							]
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "Drop All Classes",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Token {{User Token}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://127.0.0.1:8000/classes/dropclasses/",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "8000",
-							"path": [
-								"classes",
-								"dropclasses",
-								""
-							]
-						}
-					},
-					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "Gym Class",
+			"item": [
 				{
 					"name": "Create GymClasses",
 					"request": {
@@ -1465,316 +1648,20 @@
 						]
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "Studio",
-			"item": [
+				},
 				{
-					"name": "View Studios",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
+					"name": "Enroll In Class Session",
 					"request": {
 						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "location",
-									"value": "43.66970918615602,-79.41040227000227",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "http://127.0.0.1:8000/studios/?chn=Steven",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "8000",
-							"path": [
-								"studios",
-								""
-							],
-							"query": [
-								{
-									"key": "n",
-									"value": "",
-									"disabled": true
-								},
-								{
-									"key": "a",
-									"value": "",
-									"disabled": true
-								},
-								{
-									"key": "cln",
-									"value": "",
-									"disabled": true
-								},
-								{
-									"key": "chn",
-									"value": "Steven"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Studio",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{Admin Token}}",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "name",
-									"value": "test2",
-									"type": "text"
-								},
-								{
-									"key": "address",
-									"value": "340 Bloor Street W",
-									"type": "text"
-								},
-								{
-									"key": "post_code",
-									"value": "M5S1W4",
-									"type": "text"
-								},
-								{
-									"key": "phone_num",
-									"value": "4373351499",
-									"type": "text"
-								},
-								{
-									"key": "images",
-									"type": "file",
-									"src": [
-										"/Users/raghavbanka/Downloads/Unknown.jpeg",
-										"/Users/raghavbanka/Downloads/photo-1579353977828-2a4eab540b9a.jpeg"
-									]
-								}
-							]
-						},
-						"url": {
-							"raw": "http://127.0.0.1:8000/studios/create/",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "8000",
-							"path": [
-								"studios",
-								"create",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Edit Studio",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Token {{Admin Token}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "name",
-									"value": "TestName2",
-									"type": "text"
-								},
-								{
-									"key": "address",
-									"value": "320 Bloor Street W",
-									"type": "text"
-								},
-								{
-									"key": "post_code",
-									"value": "M1A2B3",
-									"type": "text"
-								},
-								{
-									"key": "phone_num",
-									"value": "1234567890",
-									"type": "text"
-								},
-								{
-									"key": "images",
-									"type": "file",
-									"src": "/D:/Downloads/PNG_transparency_demonstration_1.png"
-								}
-							]
-						},
-						"url": {
-							"raw": "http://127.0.0.1:8000/studios/1/edit/",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "8000",
-							"path": [
-								"studios",
-								"1",
-								"edit",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Edit Amenity",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Token {{Admin Token}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "type",
-									"value": "tea",
-									"type": "text"
-								},
-								{
-									"key": "quantity",
-									"value": "15",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "http://127.0.0.1:8000/studios/amenities/7/edit/",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "8000",
-							"path": [
-								"studios",
-								"amenities",
-								"7",
-								"edit",
-								""
-							],
-							"query": [
-								{
-									"key": "type",
-									"value": "tea",
-									"disabled": true
-								},
-								{
-									"key": "quantity",
-									"value": "3",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Add Amenity",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Token {{Admin Token}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "type",
-									"value": "latte",
-									"type": "text"
-								},
-								{
-									"key": "quantity",
-									"value": "20",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "http://127.0.0.1:8000/studios/1/amenities/add/",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "8000",
-							"path": [
-								"studios",
-								"1",
-								"amenities",
-								"add",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Studio",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Token {{Admin Token}}",
+								"value": "Token {{User Token}}",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "http://127.0.0.1:8000/studios/31/delete/",
+							"raw": "http://127.0.0.1:8000/classes/session/5/signup/",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1784,9 +1671,10 @@
 							],
 							"port": "8000",
 							"path": [
-								"studios",
-								"31",
-								"delete",
+								"classes",
+								"session",
+								"5",
+								"signup",
 								""
 							]
 						}
@@ -1794,12 +1682,18 @@
 					"response": []
 				},
 				{
-					"name": "List Amenity",
+					"name": "Drop Class Session",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{User Token}}",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "http://127.0.0.1:8000/studios/2/amenities/",
+							"raw": "http://127.0.0.1:8000/classes/session/5/drop/",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1809,9 +1703,41 @@
 							],
 							"port": "8000",
 							"path": [
-								"studios",
+								"classes",
+								"session",
+								"5",
+								"drop",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Enroll In Class",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{User Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/classes/2/signup/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"classes",
 								"2",
-								"amenities",
+								"signup",
 								""
 							]
 						}
@@ -1819,12 +1745,18 @@
 					"response": []
 				},
 				{
-					"name": "Image View",
+					"name": "Drop Class",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{User Token}}",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "http://127.0.0.1:8000/studios/studioimages/images.jpeg",
+							"raw": "http://127.0.0.1:8000/classes/2/drop/",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1834,21 +1766,28 @@
 							],
 							"port": "8000",
 							"path": [
-								"studios",
-								"studioimages",
-								"images.jpeg"
+								"classes",
+								"2",
+								"drop",
+								""
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "View Single Studio",
+					"name": "Drop All Classes",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{User Token}}",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "http://127.0.0.1:8000/studios/4",
+							"raw": "http://127.0.0.1:8000/classes/dropclasses/",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1858,8 +1797,9 @@
 							],
 							"port": "8000",
 							"path": [
-								"studios",
-								"4"
+								"classes",
+								"dropclasses",
+								""
 							]
 						}
 					},
@@ -1868,7 +1808,7 @@
 			]
 		},
 		{
-			"name": "Subscription",
+			"name": "Website Subscription",
 			"item": [
 				{
 					"name": "View Subscriptions",
@@ -2132,6 +2072,11 @@
 		},
 		{
 			"key": "profile picture name",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "studio picture",
 			"value": "",
 			"type": "string"
 		}
