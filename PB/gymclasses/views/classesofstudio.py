@@ -19,10 +19,6 @@ from accounts.models import UserExtension, User
 from gymclasses.models import *
 from studios.models import Studio
 
-# Create your views here.
-
-DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-
 
 class ClassesofStudioPagination(PageNumberPagination):
     page_size = 10

@@ -73,9 +73,15 @@ class EditGymClass(APIView):
                                           month=last_date.month,
                                           day=last_date.day).date()
         if data["start_time"]:
-            start_time = datetime.datetime.strptime(data['start_time'], '%H:%M').time()
+            start_time = datetime.datetime.strptime(data['start_time'], '%H:%M')
+            tz = pytz.timezone("America/Toronto")
+            start_time = start_time.replace(year=2022)
+            start_time = tz.localize(start_time)
         if data["end_time"]:
-            end_time = datetime.datetime.strptime(data['end_time'], '%H:%M').time()
+            end_time = datetime.datetime.strptime(data['end_time'], '%H:%M')
+            tz = pytz.timezone("America/Toronto")
+            end_time = end_time.replace(year=2022)
+            end_time = tz.localize(end_time)
 
         if data["day"]:
             day = data["day"]
@@ -116,22 +122,15 @@ class EditGymClass(APIView):
             if d.strftime("%A") == day:
                 s = datetime.datetime(year=d.year, month=d.month, day=d.day,
                                       hour=start_time.hour, minute=start_time.minute)
-                s = s.replace(tzinfo=pytz.UTC)
-                s = s.replace(year=d.year)
-                s = s.replace(month=d.month)
-                s = s.replace(day=d.day)
-                s = s.replace(minute=start_time.minute)
-                s = s.replace(hour=start_time.hour)
+                tz = pytz.timezone("America/Toronto")
+                s = tz.localize(s)
 
                 e = datetime.datetime(year=d.year, month=d.month, day=d.day,
                                       hour=end_time.hour, minute=end_time.minute)
 
-                e = e.replace(tzinfo=pytz.UTC)
-                e = e.replace(year=d.year)
-                e = e.replace(month=d.month)
-                e = e.replace(day=d.day)
-                e = e.replace(minute=end_time.minute)
-                e = e.replace(hour=end_time.hour)
+                tz = pytz.timezone("America/Toronto")
+                e = tz.localize(e)
+
                 gymschedule = GymClassSchedule.objects.create(date=datetime.datetime(year=d.year,
                                                                                      month=d.month,
                                                                                      day=d.day).date(),

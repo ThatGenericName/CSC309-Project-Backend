@@ -70,9 +70,12 @@ class EditGymClassSchedule(APIView):
 
         if data["date"]:
             d = datetime.datetime.strptime(data['date'], '%d/%m/%Y')
+            tz = pytz.timezone("America/Toronto")
             date = datetime.datetime(year=d.year,
                                      month=d.month,
-                                     day=d.day).date()
+                                     day=d.day)
+            date = tz.localize(date)
+            date = date.date()
         if data["coach"]:
             coach = User.objects.get(id=data["coach"])
         if data["enrollment_capacity"]:
@@ -80,43 +83,33 @@ class EditGymClassSchedule(APIView):
         if data["enrollment_count"]:
             enrollment_count = data["enrollment_count"]
         if data["start_time"]:
-            start_time = datetime.datetime.strptime(data['start_time'], '%H:%M').time()
+            start_time = datetime.datetime.strptime(data['start_time'], '%H:%M')
+            start_time = datetime.datetime(year=date.year, month=date.month, day=date.day,
+                                           hour=start_time.hour, minute=start_time.minute)
+            tz = pytz.timezone("America/Toronto")
+            start_time = tz.localize(start_time)
         if data["end_time"]:
-            end_time = datetime.datetime.strptime(data['end_time'], '%H:%M').time()
+            end_time = datetime.datetime.strptime(data['end_time'], '%H:%M')
+            end_time = datetime.datetime(year=date.year, month=date.month, day=date.day,
+                                         hour=end_time.hour, minute=end_time.minute)
+            tz = pytz.timezone("America/Toronto")
+            end_time = tz.localize(end_time)
         if data["is_cancelled"]:
             is_cancelled = data["is_cancelled"]
 
-            if start_time >= end_time:
-                return Response({"Last date must be later than the Start date"}, status=400)
+        if start_time.time() >= end_time.time():
+            return Response({"End Time must be later than the Start Time"}, status=400)
 
-        if gym_class_schedule.parent_class.earliest_date.year > date.year or \
-                gym_class_schedule.parent_class.earliest_date.month > date.month or \
-                gym_class_schedule.parent_class.earliest_date.day > date.day or \
-                gym_class_schedule.parent_class.last_date.year < date.year or \
-                gym_class_schedule.parent_class.last_date.month < date.month or \
-                gym_class_schedule.parent_class.last_date.day < date.day:
+        if gym_class_schedule.parent_class.earliest_date >= date or \
+                gym_class_schedule.parent_class.last_date < date:
             return Response({"Date not between class earliest date and last date"}, status=400)
-
-        s = gym_class_schedule.start_time
-        s = s.replace(year=date.year)
-        s = s.replace(month=date.month)
-        s = s.replace(day=date.day)
-        s = s.replace(minute=start_time.minute)
-        s = s.replace(hour=start_time.hour)
-
-        e = gym_class_schedule.end_time
-        e = e.replace(year=date.year)
-        e = e.replace(month=date.month)
-        e = e.replace(day=date.day)
-        e = e.replace(minute=end_time.minute)
-        e = e.replace(hour=end_time.hour)
 
         setattr(gym_class_schedule, "date", date)
         setattr(gym_class_schedule, "coach", coach)
         setattr(gym_class_schedule, "enrollment_capacity", enrollment_capacity)
         setattr(gym_class_schedule, "enrollment_count", enrollment_count)
-        setattr(gym_class_schedule, "start_time", s)
-        setattr(gym_class_schedule, "end_time", e)
+        setattr(gym_class_schedule, "start_time", start_time)
+        setattr(gym_class_schedule, "end_time", end_time)
         setattr(gym_class_schedule, "is_cancelled", is_cancelled)
 
         gym_class_schedule.save()

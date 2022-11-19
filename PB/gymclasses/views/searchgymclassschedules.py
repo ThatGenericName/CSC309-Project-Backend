@@ -87,14 +87,24 @@ class ViewGymClassSchedule(ListAPIView):
         if self.start_time:
             qn = []
             q_hour = qs.filter(start_time__hour__gt=self.start_time.hour).distinct()
-            q_minute = qs.filter(start_time__hour=self.start_time.hour).distinct()
-            # start_time__minute__gte = self.start_time.minute
-            q_time = q_hour | q_minute
-            qn.append(q_time)
+            q_minute = qs.filter(start_time__hour=self.start_time.hour,
+                                 start_time__minute__gte=self.start_time.minute).distinct()
+            q_start_time = q_hour | q_minute
+
+            if self.end_time:
+                qn = []
+                q_hour = qs.filter(end_time__hour__lt=self.end_time.hour).distinct()
+                q_minute = qs.filter(end_time__hour=self.end_time.hour,
+                                     end_time__minute__lte=self.end_time.minute).distinct()
+                q_end_time = q_hour | q_minute
+
+                q_start_time = q_start_time & q_end_time
+
+            qn.append(q_start_time)
             if qn:
                 q.append(reduce(operator.or_, qn))
 
-        if self.end_time:
+        elif self.end_time:
             qn = []
             q_hour = qs.filter(end_time__hour__lt=self.end_time.hour).distinct()
             q_minute = qs.filter(end_time__hour=self.end_time.hour,
