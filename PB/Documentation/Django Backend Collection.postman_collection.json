@@ -829,8 +829,7 @@
 							{
 								"key": "Authorization",
 								"value": "Token {{Admin Token}}",
-								"type": "text",
-								"disabled": true
+								"type": "text"
 							}
 						],
 						"body": {
@@ -838,12 +837,12 @@
 							"formdata": [
 								{
 									"key": "name",
-									"value": "test2",
+									"value": "test",
 									"type": "text"
 								},
 								{
 									"key": "address",
-									"value": "340 Bloor Street W",
+									"value": "310 Bloor Street W",
 									"type": "text"
 								},
 								{
@@ -859,10 +858,7 @@
 								{
 									"key": "images",
 									"type": "file",
-									"src": [
-										"/Users/raghavbanka/Downloads/Unknown.jpeg",
-										"/Users/raghavbanka/Downloads/photo-1579353977828-2a4eab540b9a.jpeg"
-									]
+									"src": []
 								}
 							]
 						},
@@ -888,7 +884,7 @@
 				{
 					"name": "Delete Studio",
 					"request": {
-						"method": "POST",
+						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
@@ -897,7 +893,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://127.0.0.1:8000/studios/31/delete/",
+							"raw": "http://127.0.0.1:8000/studios/1/delete/",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -908,7 +904,7 @@
 							"port": "8000",
 							"path": [
 								"studios",
-								"31",
+								"1",
 								"delete",
 								""
 							]
@@ -932,7 +928,7 @@
 							"formdata": [
 								{
 									"key": "name",
-									"value": "TestName2",
+									"value": "test2",
 									"type": "text"
 								},
 								{
@@ -942,23 +938,26 @@
 								},
 								{
 									"key": "post_code",
-									"value": "M1A2B3",
+									"value": "M5S1W4",
 									"type": "text"
 								},
 								{
 									"key": "phone_num",
-									"value": "1234567890",
+									"value": "1234563333",
 									"type": "text"
 								},
 								{
 									"key": "images",
 									"type": "file",
-									"src": "/D:/Downloads/PNG_transparency_demonstration_1.png"
+									"src": [
+										"/Users/raghavbanka/Downloads/iphone_6_sample_photo_566464.jpeg",
+										"/Users/raghavbanka/Downloads/images.jpeg"
+									]
 								}
 							]
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/studios/1/edit/",
+							"raw": "http://127.0.0.1:8000/studios/3/edit/",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -969,7 +968,7 @@
 							"port": "8000",
 							"path": [
 								"studios",
-								"1",
+								"3",
 								"edit",
 								""
 							]
@@ -981,9 +980,16 @@
 					"name": "Get Studio",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
 						"url": {
-							"raw": "http://127.0.0.1:8000/studios/4/",
+							"raw": "http://127.0.0.1:8000/studios/7/",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -994,7 +1000,7 @@
 							"port": "8000",
 							"path": [
 								"studios",
-								"4",
+								"7",
 								""
 							]
 						}
@@ -1074,18 +1080,18 @@
 							"formdata": [
 								{
 									"key": "type",
-									"value": "latte",
+									"value": "table",
 									"type": "text"
 								},
 								{
 									"key": "quantity",
-									"value": "20",
+									"value": "0",
 									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/studios/1/amenities/add/",
+							"raw": "http://127.0.0.1:8000/studios/4/amenities/add/",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1096,7 +1102,7 @@
 							"port": "8000",
 							"path": [
 								"studios",
-								"1",
+								"4",
 								"amenities",
 								"add",
 								""
@@ -1132,7 +1138,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/studios/amenities/7/edit/",
+							"raw": "http://127.0.0.1:8000/studios/1/amenities/edit/",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1143,8 +1149,8 @@
 							"port": "8000",
 							"path": [
 								"studios",
+								"1",
 								"amenities",
-								"7",
 								"edit",
 								""
 							],
@@ -1165,12 +1171,18 @@
 					"response": []
 				},
 				{
-					"name": "Get Amenities",
+					"name": "Delete Amenity",
 					"request": {
-						"method": "GET",
-						"header": [],
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{Admin Token}}",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "http://127.0.0.1:8000/studios/2/amenities/",
+							"raw": "http://127.0.0.1:8000/studios/1/amenities/delete/",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1181,7 +1193,33 @@
 							"port": "8000",
 							"path": [
 								"studios",
-								"2",
+								"1",
+								"amenities",
+								"delete",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Amenities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/studios/4/amenities/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"4",
 								"amenities",
 								""
 							]
@@ -1234,7 +1272,7 @@
 							"formdata": [
 								{
 									"key": "name",
-									"value": "test2",
+									"value": "test",
 									"type": "text"
 								},
 								{
@@ -1255,7 +1293,7 @@
 								},
 								{
 									"key": "earliest_date",
-									"value": "20/11/2022",
+									"value": "1/12/2022",
 									"type": "text"
 								},
 								{
@@ -1275,12 +1313,12 @@
 								},
 								{
 									"key": "start_time",
-									"value": "15:00",
+									"value": "7:00",
 									"type": "text"
 								},
 								{
 									"key": "end_time",
-									"value": "16:00",
+									"value": "9:00",
 									"type": "text"
 								},
 								{
@@ -1296,7 +1334,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/classes/2/create/",
+							"raw": "http://127.0.0.1:8000/classes/1/create/",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1307,7 +1345,7 @@
 							"port": "8000",
 							"path": [
 								"classes",
-								"2",
+								"1",
 								"create",
 								""
 							]
@@ -1318,7 +1356,7 @@
 				{
 					"name": "Delete Schedule",
 					"request": {
-						"method": "POST",
+						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
@@ -1337,7 +1375,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/classes/schedule/48/delete/",
+							"raw": "http://127.0.0.1:8000/classes/schedule/5/delete/",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1349,7 +1387,7 @@
 							"path": [
 								"classes",
 								"schedule",
-								"48",
+								"5",
 								"delete",
 								""
 							],
@@ -1367,8 +1405,14 @@
 				{
 					"name": "Delete Class",
 					"request": {
-						"method": "POST",
-						"header": [],
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{Admin Token}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "formdata",
 							"formdata": [
@@ -1418,7 +1462,7 @@
 							"formdata": []
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/classes/studio/2/list/",
+							"raw": "http://127.0.0.1:8000/classes/studio/4/list/",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1430,7 +1474,7 @@
 							"path": [
 								"classes",
 								"studio",
-								"2",
+								"4",
 								"list",
 								""
 							]
@@ -1440,11 +1484,37 @@
 				},
 				{
 					"name": "View GymClassSchedule",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "time_range",
+									"value": "8:00-8:30",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "06/12/2022",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "rjkj",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/classes/?time_range=13:00-14:00&name=test",
+							"raw": "http://127.0.0.1:8000/classes/?time_range=7:00-9:00",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1460,21 +1530,22 @@
 							"query": [
 								{
 									"key": "coach_name",
-									"value": "Fname LName",
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "date",
-									"value": "21/11/2022,28/11/2022",
+									"value": "21/12/2022,06/12/2022",
 									"disabled": true
 								},
 								{
 									"key": "time_range",
-									"value": "13:00-14:00"
+									"value": "7:00-9:00"
 								},
 								{
 									"key": "name",
-									"value": "test"
+									"value": "test",
+									"disabled": true
 								}
 							]
 						}
@@ -1559,7 +1630,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/classes/1/edit/",
+							"raw": "http://127.0.0.1:8000/classes/11/edit/",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1570,7 +1641,7 @@
 							"port": "8000",
 							"path": [
 								"classes",
-								"1",
+								"11",
 								"edit",
 								""
 							],
@@ -1638,14 +1709,72 @@
 				{
 					"name": "Edit Gym Class Schedule",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
 								"value": "Token {{Admin Token}}",
 								"type": "text"
 							}
-						]
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "date",
+									"value": "30/12/2022",
+									"type": "text"
+								},
+								{
+									"key": "coach",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "enrollment_capacity",
+									"value": "100",
+									"type": "text"
+								},
+								{
+									"key": "enrollment_count",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "start_time",
+									"value": "11:00",
+									"type": "text"
+								},
+								{
+									"key": "end_time",
+									"value": "12:00",
+									"type": "text"
+								},
+								{
+									"key": "is_cancelled",
+									"value": "True",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/classes/schedule/18/edit/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"classes",
+								"schedule",
+								"18",
+								"edit",
+								""
+							]
+						}
 					},
 					"response": []
 				},
