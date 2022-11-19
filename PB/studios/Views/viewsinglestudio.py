@@ -21,7 +21,7 @@ class ViewStudio(APIView):
         try:
             Studio.objects.get(id=kwargs["studio_id"])
         except ObjectDoesNotExist:
-            Response({"Studio Does not exist"}, status=404)
+            return Response({"Studio Does not exist"}, status=404)
 
         studio = Studio.objects.get(id=kwargs["studio_id"])
         lat, long = studio.geo_loc.split(",")
@@ -29,4 +29,4 @@ class ViewStudio(APIView):
         s = StudioSerializer(studio).data
         s["direction"] = "https://maps.google.com/?q=" + lat + "," + long
 
-        return Response(s)
+        return Response(s, status=200)

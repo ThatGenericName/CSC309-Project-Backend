@@ -49,4 +49,4 @@ class DeleteGymClass(APIView):
                 setattr(item, "is_cancelled", True)
                 item.save()
 
-        return Response({"success": True})
+        return Response({"success": True}, status=200)

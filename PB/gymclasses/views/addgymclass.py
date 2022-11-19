@@ -68,17 +68,21 @@ class CreateGymClass(APIView):
         except ObjectDoesNotExist:
             return Response({'error': 'Coach was not found'}, status=404)
 
-        if not coach.groups.filter(name='Coach').exists():
-            return Response({'error': 'Coach was not found'}, status=404)
+        # if not coach.groups.filter(name='Coach').exists():
+        #     return Response({'error': 'Coach was not found'}, status=404)
 
         start_time = dt.datetime.strptime(data['start_time'], '%H:%M').time()
         end_time = dt.datetime.strptime(data['end_time'], '%H:%M').time()
 
         start_date = datetime.strptime(data['earliest_date'], '%d/%m/%Y')
-        start_date = start_date.replace(tzinfo=pytz.UTC)
+        start_date = datetime(year=start_date.year,
+                              month=start_date.month,
+                              day=start_date.day).date()
 
         end_date = datetime.strptime(data['last_date'], '%d/%m/%Y')
-        end_date = end_date.replace(tzinfo=pytz.UTC)
+        end_date = datetime(year=end_date.year,
+                            month=end_date.month,
+                            day=end_date.day).date()
 
         any_classes = False
 
@@ -114,14 +118,21 @@ class CreateGymClass(APIView):
 
         for d in self.daterange(start_date, end_date):
             if d.strftime("%A") == data['day']:
+
                 s = datetime(year=d.year, month=d.month, day=d.day,
                              hour=start_time.hour, minute=start_time.minute)
-                s = s.replace(tzinfo=pytz.UTC)
+                tz = pytz.timezone("America/Toronto")
+                s = s.replace(tzinfo=tz)
+                #s = s.astimezone(pytz.timezone('utc'))
+
                 e = datetime(year=d.year, month=d.month, day=d.day,
                              hour=end_time.hour, minute=end_time.minute)
-                e = e.replace(tzinfo=pytz.UTC)
+                e = e.replace(tzinfo=tz)
+                #e = e.astimezone(pytz.timezone('utc'))
 
-                gymschedule = GymClassSchedule.objects.create(date=d,
+                gymschedule = GymClassSchedule.objects.create(date=datetime(year=d.year,
+                                                                            month=d.month,
+                                                                            day=d.day).date(),
                                                               parent_class=gymclass,
                                                               coach=coach,
                                                               enrollment_capacity=data[
@@ -170,7 +181,7 @@ class CreateGymClass(APIView):
             except ValueError:
                 errors['last_date'] = "Wrong End Date Format"
 
-        if 'last_date' not in errors:
+        if 'last_date' not in errors and 'earliest_date' not in errors:
             start = datetime.strptime(data['earliest_date'], '%d/%m/%Y')
             end = datetime.strptime(data['last_date'], '%d/%m/%Y')
             if start >= end:
@@ -188,7 +199,7 @@ class CreateGymClass(APIView):
             except ValueError:
                 errors['end_time'] = "Wrong End Time Format"
 
-        if 'end_time' not in errors:
+        if 'end_time' not in errors and 'start_time' not in errors:
             start_time = dt.datetime.strptime(data['start_time'], '%H:%M').time()
             end_time = dt.datetime.strptime(data['end_time'], '%H:%M').time()
 

@@ -70,7 +70,7 @@ class EditStudio(APIView):
                                                     studio=studio)
                     image.save()
 
-        return Response(status=200)
+        return Response({"success"}, status=200)
 
     def ValidateData(self, data) -> dict:
         errors = {}

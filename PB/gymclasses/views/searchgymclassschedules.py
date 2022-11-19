@@ -2,6 +2,7 @@ import uuid
 from datetime import timedelta
 import datetime
 
+import pytz
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from rest_framework.generics import ListAPIView
@@ -39,6 +40,7 @@ class ViewGymClassSchedule(ListAPIView):
     end_time = None
 
     def get(self, request, *args, **kwargs):
+        a = timezone.now()
         e = self.ProcessParams(request.query_params)
         if e:
             return Response(e, status=400)
@@ -84,18 +86,20 @@ class ViewGymClassSchedule(ListAPIView):
 
         if self.start_time:
             qn = []
-            q_hour = qs.filter(start_time__hour__gte=self.start_time.hour).distinct()
-            q_minute = qs.filter(start_time__minute__gte=self.start_time.minute).distinct()
-            q_time = q_hour & q_minute
+            q_hour = qs.filter(start_time__hour__gt=self.start_time.hour).distinct()
+            q_minute = qs.filter(start_time__hour=self.start_time.hour).distinct()
+            # start_time__minute__gte = self.start_time.minute
+            q_time = q_hour | q_minute
             qn.append(q_time)
             if qn:
                 q.append(reduce(operator.or_, qn))
 
         if self.end_time:
             qn = []
-            q_hour = qs.filter(end_time__hour__lte=self.end_time.hour).distinct()
-            q_minute = qs.filter(end_time__minute__lte=self.end_time.minute).distinct()
-            q_time = q_hour & q_minute
+            q_hour = qs.filter(end_time__hour__lt=self.end_time.hour).distinct()
+            q_minute = qs.filter(end_time__hour=self.end_time.hour,
+                                 end_time__minute__lte=self.end_time.minute).distinct()
+            q_time = q_hour | q_minute
             qn.append(q_time)
             if qn:
                 q.append(reduce(operator.or_, qn))
@@ -148,6 +152,7 @@ class ViewGymClassSchedule(ListAPIView):
                     errors["time_range"] = {"Wrong start date Format"}
 
                 self.start_time = datetime.datetime.strptime(lst[0], '%H:%M')
+                # self.start_time = self.start_time.astimezone(pytz.UTC)
 
             if lst[1]:
 
@@ -157,6 +162,7 @@ class ViewGymClassSchedule(ListAPIView):
                     errors["time_range"] = {"Wrong end date Format"}
 
                 self.end_time = datetime.datetime.strptime(lst[1], '%H:%M')
+                # self.end_time = self.end_time.astimezone(pytz.UTC)
 
             if self.start_time and self.end_time:
                 if self.start_time >= self.end_time:

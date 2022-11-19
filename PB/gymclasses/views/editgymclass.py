@@ -64,10 +64,14 @@ class EditGymClass(APIView):
 
         if data["earliest_date"]:
             earliest_date = datetime.datetime.strptime(data['earliest_date'], '%d/%m/%Y')
-            earliest_date = earliest_date.replace(tzinfo=pytz.UTC)
+            earliest_date = datetime.datetime(year=earliest_date.year,
+                                              month=earliest_date.month,
+                                              day=earliest_date.day).date()
         if data["last_date"]:
             last_date = datetime.datetime.strptime(data['last_date'], '%d/%m/%Y')
-            last_date = last_date.replace(tzinfo=pytz.UTC)
+            last_date = datetime.datetime(year=last_date.year,
+                                          month=last_date.month,
+                                          day=last_date.day).date()
         if data["start_time"]:
             start_time = datetime.datetime.strptime(data['start_time'], '%H:%M').time()
         if data["end_time"]:
@@ -128,7 +132,9 @@ class EditGymClass(APIView):
                 e = e.replace(day=d.day)
                 e = e.replace(minute=end_time.minute)
                 e = e.replace(hour=end_time.hour)
-                gymschedule = GymClassSchedule.objects.create(date=d,
+                gymschedule = GymClassSchedule.objects.create(date=datetime.datetime(year=d.year,
+                                                                                     month=d.month,
+                                                                                     day=d.day).date(),
                                                               coach=User.objects.get(id=1),
                                                               parent_class=gym_class,
                                                               start_time=s,

@@ -70,7 +70,9 @@ class EditGymClassSchedule(APIView):
 
         if data["date"]:
             d = datetime.datetime.strptime(data['date'], '%d/%m/%Y')
-            date = d.replace(tzinfo=pytz.UTC)
+            date = datetime.datetime(year=d.year,
+                                     month=d.month,
+                                     day=d.day).date()
         if data["coach"]:
             coach = User.objects.get(id=data["coach"])
         if data["enrollment_capacity"]:
@@ -85,7 +87,7 @@ class EditGymClassSchedule(APIView):
             is_cancelled = data["is_cancelled"]
 
             if start_time >= end_time:
-                return Response({"Last date must be later than the Start date"})
+                return Response({"Last date must be later than the Start date"}, status=400)
 
         if gym_class_schedule.parent_class.earliest_date.year > date.year or \
                 gym_class_schedule.parent_class.earliest_date.month > date.month or \
@@ -93,7 +95,7 @@ class EditGymClassSchedule(APIView):
                 gym_class_schedule.parent_class.last_date.year < date.year or \
                 gym_class_schedule.parent_class.last_date.month < date.month or \
                 gym_class_schedule.parent_class.last_date.day < date.day:
-            return Response({"Date not between class earliest date and last date"})
+            return Response({"Date not between class earliest date and last date"}, status=400)
 
         s = gym_class_schedule.start_time
         s = s.replace(year=date.year)
@@ -126,6 +128,12 @@ class EditGymClassSchedule(APIView):
         for key in self.keys:
             if key not in data:
                 errors[key] = "Missing Key"
+
+        if 'date' not in errors:
+            try:
+                datetime.datetime.strptime(data['date'], '%d/%m/%Y')
+            except ValueError:
+                errors['date'] = "Wrong  Date Format"
 
         if 'enrollment_capacity' not in errors and data["enrollment_capacity"]:
             try:

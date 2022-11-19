@@ -54,4 +54,10 @@ class AddAmenity(APIView):
             elif not data[key]:
                 errors[key] = "This Field is required"
 
+        if "quantity" not in errors:
+            try:
+                int(data["quantity"])
+            except ValueError:
+                errors["quantity"] = "Wrong Quantity input type"
+
         return errors

@@ -60,7 +60,9 @@ class EditAmenity(APIView):
                 errors[key] = "This Field is required"
 
         if "quantity" not in errors:
-            if type(data["quantity"]) != int:
-                errors["quantity"] = "Quantity should be an integer"
+            try:
+                int(data["quantity"])
+            except ValueError:
+                errors["quantity"] = "Wrong Quantity input type"
 
         return errors

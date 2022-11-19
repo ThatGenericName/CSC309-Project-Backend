@@ -36,6 +36,6 @@ class ListAmenity(ListAPIView):
     def get_queryset(self):
 
         pk = self.kwargs['pk']
-        qs = Amenity.objects.filter(studio_id=pk)
+        qs = Amenity.objects.filter(studio_id=pk).order_by('type')
 
         return qs
